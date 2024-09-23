@@ -1,35 +1,12 @@
-# crochett
+# Crochett 🪡
+An e-shop where you can buy crochett accessories
 
-This template should help get you started developing with Vue 3 in Vite.
+## This is website for a friend's venture, you can find her social media right below:
+- <a href="https://www.instagram.com/crochett_accesories/" target="_blank">Instagram</a>
+- <a href="https://www.whatsapp.com/catalog/584123830362" target="_blank">Whatsapp</a>
 
-## Recommended IDE Setup
+# One of her works
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c1a22a65-e810-4044-8507-3b3ce6fd49d5" alt="Crochett Bouquet">
+</p>
