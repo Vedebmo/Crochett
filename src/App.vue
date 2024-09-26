@@ -12,7 +12,7 @@ import HomeView from './views/HomeView.vue'
 *{
   margin: 0%;
   padding: 0;
-  font-family: "IMs Fell English", "Belleza", 'Arimo';
+  font-family: "Im Fell English", "Belleza", 'Arimo';
 }
 
 html{

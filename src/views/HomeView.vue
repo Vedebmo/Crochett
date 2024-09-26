@@ -69,7 +69,7 @@
           visibleItems.length == 1 ? carouselIndex = (carouselItems.length - visibleItems.length) : carouselIndex = (carouselItems.length + 1 - visibleItems.length)
         }
       }
-      translate = window.innerWidth < 600 ? -4 - (carouselIndex * 109) : -4 - (carouselIndex * 107);
+      translate = -4 - (carouselIndex * 107);
       carouselInner.style.transform = `translateX(${translate}%)`;
       setTimeout(()=>{
         checkIfVisible()
@@ -103,7 +103,7 @@
       <span> <img src="@/assets/Logo.png" alt="Crochett Accesories"></span>
       <section>
         <span class="icon-search" id="search">
-          <input type="text" placeholder="Buscar articulo" style="display: none;" id="input">
+          <input type="text" placeholder="Buscar artículo" style="display: none;" id="input">
         </span>
         <span class="icon-cart"></span>
       </section>
@@ -115,9 +115,10 @@
   <div class="carousel-container">
     <h3>¡Tu búsqueda del regalo ideal comienza aquí!</h3>
     <div class="row">
-      <h4 style="font-weight: bold; font-size: large;">Categorías</h4>
+      <h4 style="font-size: large;">Categorías</h4>
       <hr>
     </div>
+    <br>
     <span class="arrow icon-arrow-left"></span>
     <div class="carousel">
       <div class="carousel-inner">
@@ -184,6 +185,40 @@
       </div>
     </div>
     <span class="arrow icon-arrow-right"></span>
+  </div>
+  <div class="instructions-container">
+    <div class="row">
+      <h3>Cómo realizar un pedido personalizado?</h3>
+      <hr>
+    </div>
+    <div class="instructions">
+      <div class="instruction">
+        <h2 style="text-align: center; color: #cda349">1</h2>
+        <p>Es fundamental que planifiques tu pedido con al menos una semana y media de anticipación. Esto nos permite asegurarnos de que podamos dedicar el tiempo y los recursos necesarios para crear tu producto personalizado. Si, por alguna razón, necesitas el pedido en un plazo más corto, ten en cuenta que se aplicará un cargo adicional de $3 por cada carácter de urgencia. Este cargo es necesario para priorizar tu pedido y garantizar que se complete a tiempo.
+        </p>
+      </div>
+      <div class="instruction">
+        <h2 style="text-align: center; color: #cda349">2</h2>
+        <p>Para poder ofrecerte el mejor servicio posible, es importante que envíes una imagen de referencia del producto que deseas personalizar. Esta imagen nos ayudará a entender exactamente lo que estás buscando y a proporcionarte un precio más preciso. Cuanto más clara y detallada sea la imagen, mejor podremos atender tu solicitud.</p>
+      </div>
+      <div class="instruction">
+        <h2 style="text-align: center; color: #cda349">3</h2>
+        <p>Una vez que recibamos tu imagen de referencia, nuestro equipo evaluará el diseño y te proporcionará un precio estimado para tu pedido. Este precio tomará en cuenta factores como la complejidad del diseño, los materiales necesarios y el tiempo de producción. Nos aseguraremos de que entiendas todos los costos involucrados antes de que decidas continuar con el pedido.
+        </p>
+      </div>
+      <div class="instruction">
+        <h2 style="text-align: center; color: #cda349">4</h2>
+        <p>Si decides proceder con el pedido y el costo total es superior a $10, deberás realizar un pago del 60% del total como anticipo. Este anticipo es esencial para reservar tu pedido y comenzar el proceso de creación. Es importante destacar que este pago del 60% no es reembolsable en caso de cancelación. En caso de que el costo total del pedido sea inferior a $10, el pago deberá hacerse en su totalidad en este momento. </p>
+      </div>
+      <div class="instruction">
+        <h2 style="text-align: center; color: #cda349">5</h2>
+        <p>Una vez que tu pedido esté listo para ser entregado, deberás abonar el saldo restante. Si eliges pagar en divisa, este pago debe realizarse el mismo día de la entrega. Sin embargo, si prefieres realizarlo mediante pago móvil, es importante que completes esta transacción antes de la entrega para evitar inconvenientes. Te recordaremos los detalles de pago y la cantidad que queda por abonar cuando se acerque la fecha de entrega.</p>
+      </div>
+      <div class="instruction">
+        <h2 style="text-align: center; color: #cda349">6</h2>
+        <p>Es importante que tengas en cuenta que el límite para retirar tu pedido es de 15 días a partir de la fecha de entrega acordada. Si no retiras tu pedido dentro de este plazo, perderás el derecho sobre él y podremos venderlo a otros clientes. Te recomendamos que planifiques con anticipación para asegurarte de que puedes recoger tu pedido a tiempo.</p>
+      </div>
+    </div>
   </div>
   </main>
 </template>
@@ -257,18 +292,28 @@
 
   h3{
     text-align: center;
-    margin-bottom: 1vh;
+  }
+
+  h1,h2,h5{
+    font-weight: 100;
+  }
+
+  h2{
+    font-family: Helvetica;
   }
 
   .row{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+    width: 90%;
+    margin: auto;
   }
 
   hr{
     border: #cda349 2px solid;
-    width: 70%;
+    width: -webkit-fill-available;
+    margin-left: 2%;
     height: 0px;
   }
   .carousel {
@@ -330,6 +375,28 @@
     right: 5vw;
   }
 
+  .instructions-container{
+    position: relative;
+    top: 36vh;
+  }
+
+  .instructions{
+    display: flex;
+    flex-wrap: wrap;
+    width: 90%;
+    margin: 2vh auto;
+  }
+
+  .instruction{
+    margin: 5% 0;
+    flex-basis: 98%;
+    text-align: justify;
+  }
+
+  .instruction p{
+    font-family: "Belleza";
+  }
+
   @media screen and (min-width: 601px) {
     .intro{
       font-size: 1.5em;
@@ -345,10 +412,8 @@
 
     h3{
       margin: 0;
-    }
-
-    hr{
-      width: 85%;
+      padding: 0;
+      text-wrap: nowrap;
     }
 
     .carousel-inner{
@@ -362,6 +427,11 @@
 
     .carousel-item-container{
       width: auto;
+    }
+
+    .instruction{
+      flex-basis: 40%;
+      margin: 1% 4%;
     }
   }
 </style>
