@@ -18,6 +18,7 @@ import HomeView from './views/HomeView.vue'
 html{
   scroll-behavior: smooth;
   height: 100vh;
+  overflow-x: hidden;
 }
 </style>
 
