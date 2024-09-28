@@ -1,4 +1,7 @@
 <script setup>
+  import MenuComponent from '@/components/MenuComponent.vue';
+  import {Store} from "@/stores/Store.js"
+  const store = Store()
   import { onMounted } from "vue";
   onMounted(()=>{
     let translate = -4;
@@ -15,6 +18,11 @@
         visible = false
         setTimeout(checkVisibleItems,500)
       }, 500)
+
+      if(store.showingMenu){
+        store.toogleMenu()
+        store.toogleMenu()
+      }
     })
 
     let arrow;
@@ -99,7 +107,7 @@
    <div class="container">
     <img src="@/assets/Background.png" alt="Background" class="background">
     <nav>
-      <span class="icon-paragraph-justify"></span>
+      <span class="icon-paragraph-justify" @click="store.toogleMenu"></span>
       <span> <img src="@/assets/Logo.png" alt="Crochett Accesories"></span>
       <section>
         <span class="icon-search" id="search">
@@ -125,61 +133,43 @@
         <div class="carousel-item">
           <div class="carousel-item-container">
             <img src="@/assets/background.png" alt="Carousel-item">
-            <h1 style="text-align: center;">Texto</h1>
+            <h1 style="text-align: center;">Stock</h1>
           </div>
         </div>
         <div class="carousel-item">
           <div class="carousel-item-container">
             <img src="@/assets/background.png" alt="Carousel-item">
-            <h1 style="text-align: center;">Texto</h1>
+            <h1 style="text-align: center;">Floristería</h1>
           </div>
         </div>
         <div class="carousel-item">
           <div class="carousel-item-container">
             <img src="@/assets/background.png" alt="Carousel-item">
-            <h1 style="text-align: center;">Texto</h1>
+            <h1 style="text-align: center;">Combos</h1>
           </div>
         </div>
         <div class="carousel-item">
           <div class="carousel-item-container">
             <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Texto</h1>
+            <h1 style="text-align: center;">Peluches y Llaveros</h1>
           </div>
         </div>
         <div class="carousel-item">
           <div class="carousel-item-container">
             <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Texto</h1>
+            <h1 style="text-align: center;">Navidad</h1>
           </div>
         </div>
         <div class="carousel-item">
           <div class="carousel-item-container">
             <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Texto</h1>
+            <h1 style="text-align: center;">Agrégale a tu pedido</h1>
           </div>
         </div>
         <div class="carousel-item">
           <div class="carousel-item-container">
             <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Texto</h1>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="carousel-item-container">
-            <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Texto</h1>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="carousel-item-container">
-            <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Texto</h1>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="carousel-item-container">
-            <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Texto Final</h1>
+            <h1 style="text-align: center;">Ropa Tejida</h1>
           </div>
         </div>
       </div>
@@ -221,7 +211,6 @@
     </div>
   </div>
   <br>
-
   <div class="footer-container">
     <div class="button">
       <a href="https://www.whatsapp.com/catalog/584123830362" target="_blank">
@@ -233,6 +222,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="107.6" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0.3 -2.4 487.8 107.6" width="487.8" zoomAndPan="magnify"><path d="M485.783,63.315 c1.035-7.044-37.25-8.854-41.621-9.027c-20.736-0.82-41.203,1.426-61.496,5.596c-17.766,3.651-35.393,8.258-52.738,13.552 c-12.422,3.791-24.48,8.875-37.156,11.794c-23.641,5.445-51.701,5.928-73.911-5.071c-15.772-7.811-30.524-22.026-34.418-39.833 c-2.858-13.072,1.245-28.825,13.568-35.703c9.567-5.339,21.628-3.543,30.128,3.201c5.436,4.313,8.827,9.577,8.519,16.571 c-0.079,1.802,0.214,4.884-0.668,6.367c-3.125-4.174,1.542-9.964,4.663-12.477c9.736-7.839,24.123-7.235,35.49-4.077 c8.107,2.252,15.707,6.685,18.732,14.992c2.83,7.765,0.172,16.261-3.469,23.223c-5.777,11.05-15.846,17.99-26.156,24.504 c-13.445,8.496-28.273,14.678-43.75,18.379c-35.196,8.417-71.896,7.876-106.699-2.158c-23.821-6.867-44.934-20.295-68.709-27.2 c-8.599-2.498-17.632-4.188-26.547-5.055c-4.273-0.416-8.731-0.991-12.979-0.049c-1.828,0.405-3.908,0.951-5.316,2.206" fill="none" stroke="#f8a9ac" stroke-miterlimit="10" stroke-width="3"/></svg>
     </div>
   </div>
+  <MenuComponent v-if="store.showingMenu"></MenuComponent>
   </main>
 </template>
 
@@ -263,7 +253,7 @@
     justify-content: space-evenly;
     width: 90vw;
     margin-top: 15px;
-    font-size: 75%;
+    font-size: 2.9vw;
     border-radius: 50px;
   }
 
@@ -334,7 +324,7 @@
     width: 70vw;
     margin: auto;
     overflow: hidden;
-    height: 33vh;
+    height: 40vh;
     display: flex;
     align-items: center;
   }
@@ -368,6 +358,10 @@
     display: flex;
     flex-direction: column;
     width: -webkit-fill-available;
+  }
+
+  .carousel-item-container h1{
+    font-size: 25px;
   }
 
   .arrow {
@@ -430,7 +424,7 @@
     width: 110%;
     height: 110%;
     object-fit: cover;
-    transition: all ease 1s;
+    transition: background ease 1s;
     cursor: pointer;
   }
 
@@ -443,7 +437,7 @@
     left: 55%;
     transform: translate(-50%, -50%);
     text-align: center;
-    transition: all ease 1s;
+    transition: color ease 1s;
     cursor: pointer;
   }
 
@@ -499,7 +493,7 @@
     }
 
     .carousel{
-      height: 150px;
+      height: 200px;
     }
 
     .carousel-inner{
