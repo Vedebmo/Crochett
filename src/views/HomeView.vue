@@ -4,7 +4,7 @@
   const store = Store()
   import { onMounted } from "vue";
   onMounted(()=>{
-    let translate = -4;
+    let translate = 0;
     let debounceTimeout
 
     window.addEventListener('resize', () => {
@@ -14,7 +14,6 @@
         carouselItems = []
         arrow = []
         carouselIndex = 0
-        carouselInner.style.transform = `translateX(-4%)`
         visible = false
         setTimeout(checkVisibleItems,500)
       }, 500)
@@ -77,7 +76,7 @@
           visibleItems.length == 1 ? carouselIndex = (carouselItems.length - visibleItems.length) : carouselIndex = (carouselItems.length + 1 - visibleItems.length)
         }
       }
-      translate = -4 - (carouselIndex * 107);
+      translate = - (carouselIndex * 105.5);
       carouselInner.style.transform = `translateX(${translate}%)`;
       setTimeout(()=>{
         checkIfVisible()
@@ -130,48 +129,14 @@
     <span class="arrow icon-arrow-left"></span>
     <div class="carousel">
       <div class="carousel-inner">
-        <div class="carousel-item">
-          <div class="carousel-item-container">
-            <img src="@/assets/background.png" alt="Carousel-item">
-            <h1 style="text-align: center;">Stock</h1>
+        <router-link v-for="category in store.classes" :to="{name: 'template', params:{class: category}}" class="carousel-item">
+          <div class="carousel-item">
+            <div class="carousel-item-container">
+              <img src="@/assets/width_500.webp" alt="Carousel-item">
+              <h1 style="text-align: center;">{{category}}</h1>
+            </div>
           </div>
-        </div>
-        <div class="carousel-item">
-          <div class="carousel-item-container">
-            <img src="@/assets/background.png" alt="Carousel-item">
-            <h1 style="text-align: center;">Floristería</h1>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="carousel-item-container">
-            <img src="@/assets/background.png" alt="Carousel-item">
-            <h1 style="text-align: center;">Combos</h1>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="carousel-item-container">
-            <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Peluches y Llaveros</h1>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="carousel-item-container">
-            <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Navidad</h1>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="carousel-item-container">
-            <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Agrégale a tu pedido</h1>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="carousel-item-container">
-            <img src="@/assets/width_500.webp" alt="Carousel-item">
-            <h1 style="text-align: center;">Ropa Tejida</h1>
-          </div>
-        </div>
+        </router-link>
       </div>
     </div>
     <span class="arrow icon-arrow-right"></span>
@@ -305,20 +270,6 @@
     font-family: Helvetica;
   }
 
-  .row{
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 90%;
-    margin: auto;
-  }
-
-  hr{
-    border: #cda349 2px solid;
-    width: -webkit-fill-available;
-    margin-left: 2%;
-    height: 0px;
-  }
   .carousel {
     position: relative;
     width: 70vw;
@@ -344,7 +295,9 @@
     height: -webkit-fill-available;
     display: flex;
     cursor: pointer;
-    justify-content: center
+    justify-content: center;
+    text-decoration: none;
+    color: #000;
   }
 
   .carousel-item div img {

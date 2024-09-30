@@ -2,13 +2,11 @@
     <div class="menu">
     <span class="icon-arrow-left" @click="store.toogleMenu"></span>
     <h1>Menú</h1>
-    <ul>Stock</ul>
-    <ul>Floristería</ul>
-    <ul>Combos</ul>
-    <ul>Peluches y Llaveros</ul>
-    <ul>Navidad</ul>
-    <ul>Agrégale a tu pedido</ul>
-    <ul>Ropa Tejida</ul>
+    <router-link v-for="(category, index) in store.classes" :to="{ name: 'template', params: { class: category } }">
+        <ul>
+            {{ category }}
+        </ul>
+    </router-link>
   </div>
 </template>
 
@@ -38,6 +36,13 @@
         overflow-y: auto;
     }
 
+    .menu a{
+        display: contents;
+        text-decoration: none;
+        color: black;
+        transition: color ease 1s;
+    }
+
     .menu ul{
         font-size: large;
         width: 35%;
@@ -46,6 +51,10 @@
         cursor: pointer;
         transition: background ease 1s;
         border-radius: 5px;
+    }
+
+    .menu a:hover{
+        color: white;
     }
 
     .menu ul:hover{
@@ -65,6 +74,11 @@
         .menu{
             width: 40vw;
             position: fixed;
+        }
+
+        .icon-arrow-left{
+            top: 5vh;
+            left: 4vw;
         }
     }
 </style>

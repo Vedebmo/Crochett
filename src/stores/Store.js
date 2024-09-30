@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 
 export const Store = defineStore('Store', {
   state: () => ({
-    showingMenu: false
+    showingMenu: false,
+    classes: ["Stock", "Floristería", "Combos", "Peluches y Llaveros", "Navidad", "Agrégale a tu pedido", "Ropa Tejida"],
   }),
 
   actions:{
