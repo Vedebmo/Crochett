@@ -1,7 +1,5 @@
 <template>
-    <router-link :to="{name: 'home'}">
-        <span class="icon-arrow-left" @click="store.back"></span>
-    </router-link>
+    <span class="icon-arrow-left" @click.prevent="goBack"></span>
 </template>
 
 <style scoped>
@@ -22,6 +20,11 @@
 
 <script>
     export default {
-        name: "Back"
+        name: "Back",
+    methods: {
+      goBack() {
+        this.$router.go(-1);
+      }
     }
+}
 </script>
