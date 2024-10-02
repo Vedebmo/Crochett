@@ -5,6 +5,10 @@
   import { onMounted } from "vue";
   onMounted(()=>{
     let translate = 0;
+
+    let toTranslate
+    document.documentElement.clientWidth < 601 ? toTranslate = 107.5 : toTranslate = 105.5
+
     let debounceTimeout
 
     window.addEventListener('resize', () => {
@@ -22,6 +26,8 @@
         store.toogleMenu()
         store.toogleMenu()
       }
+
+      document.documentElement.clientWidth < 601 ? toTranslate = 107.5 : toTranslate = 105.5
     })
 
     let arrow;
@@ -76,7 +82,7 @@
           visibleItems.length == 1 ? carouselIndex = (carouselItems.length - visibleItems.length) : carouselIndex = (carouselItems.length + 1 - visibleItems.length)
         }
       }
-      translate = - (carouselIndex * 105.5);
+      translate = - (carouselIndex * toTranslate);
       carouselInner.style.transform = `translateX(${translate}%)`;
       setTimeout(()=>{
         checkIfVisible()

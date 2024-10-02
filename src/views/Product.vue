@@ -36,7 +36,9 @@
         </p>
         <p style="margin-top: 10px;">
           Pedido disponible por encargo, con una semana y media de anticipación
-
+        </p>
+        <br>
+        <p class="incluye">
           Incluye:
           Girasol de 15 cm de diametro
           Perfume
@@ -228,6 +230,7 @@
     max-height: 40vh;
     margin-bottom: 20px;
     object-fit: scale-down;
+    cursor: default;
   }
 
   .modal-content button {
@@ -275,9 +278,12 @@
     }
 
     .right{
-      justify-content: center;
       width: 40%;
       height: 70vh;
+    }
+
+    .right h1, .right p{
+      text-align: left;
     }
 
     .arrow{
@@ -303,6 +309,11 @@
     .amount{
       position: relative;
       top: 10vh;
+    }
+
+    .description{
+      font-size: 1.5rem;
+      margin: inherit
     }
   }
 </style>
