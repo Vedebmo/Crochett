@@ -82,6 +82,7 @@
 
     .button{
         top: 25vh;
+        margin: auto;
     }
 
     #text{
