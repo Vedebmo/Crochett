@@ -1,7 +1,11 @@
 <script setup>
   import MenuComponent from '@/components/MenuComponent.vue';
   import {Store} from "@/stores/Store.js"
+  import { Cart } from "@/Stores/Cart.js";
+  import ShopCart  from "@/components/ShopCart.vue";
+  import Button from "@/components/Button.vue";
   const store = Store()
+  const cart = Cart()
   import { onMounted } from "vue";
   onMounted(()=>{
     let translate = 0;
@@ -25,6 +29,11 @@
       if(store.showingMenu){
         store.toogleMenu()
         store.toogleMenu()
+      }
+
+      if(cart.showingCart){
+        cart.toogleCart()
+        cart.toogleCart()
       }
 
       document.documentElement.clientWidth < 601 ? toTranslate = 107.5 : toTranslate = 105.5
@@ -91,7 +100,12 @@
 
     document.querySelector('.icon-arrow-right').addEventListener('click', () => navigateCarousel('next'));
     document.querySelector('.icon-arrow-left').addEventListener('click', () => navigateCarousel('prev'));
+
   })
+
+  function toCatalog(){
+    window.open('https://www.whatsapp.com/catalog/584123830362');
+  }
 
   function toSearch(e) {
     const search = document.getElementById('search')
@@ -104,6 +118,10 @@
       search.style.margin = '0';
     }
 
+  }
+  function toggleCart() {
+    store.showingMenu ? store.toogleMenu() : ""
+    cart.toogleCart();
   }
 </script>
 
@@ -118,7 +136,7 @@
         <span class="icon-search" id="search">
           <input type="text" placeholder="Buscar artículo" style="display: none;" id="input">
         </span>
-        <span class="icon-cart"></span>
+        <span class="icon-cart" @click="toggleCart"></span>
       </section>
     </nav>
     <div class="intro">
@@ -183,17 +201,13 @@
   </div>
   <br>
   <div class="footer-container">
-    <div class="button">
-      <a href="https://www.whatsapp.com/catalog/584123830362" target="_blank">
-        <img src="@/assets/Frame.webp" alt="Botón">
-        <p>Haz tu pedido aquí</p>
-      </a>
-    </div>
+    <Button :text="'Haz tu pedido aquí'" @click="toCatalog"></Button>
     <div class="heart">
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="107.6" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0.3 -2.4 487.8 107.6" width="487.8" zoomAndPan="magnify"><path d="M485.783,63.315 c1.035-7.044-37.25-8.854-41.621-9.027c-20.736-0.82-41.203,1.426-61.496,5.596c-17.766,3.651-35.393,8.258-52.738,13.552 c-12.422,3.791-24.48,8.875-37.156,11.794c-23.641,5.445-51.701,5.928-73.911-5.071c-15.772-7.811-30.524-22.026-34.418-39.833 c-2.858-13.072,1.245-28.825,13.568-35.703c9.567-5.339,21.628-3.543,30.128,3.201c5.436,4.313,8.827,9.577,8.519,16.571 c-0.079,1.802,0.214,4.884-0.668,6.367c-3.125-4.174,1.542-9.964,4.663-12.477c9.736-7.839,24.123-7.235,35.49-4.077 c8.107,2.252,15.707,6.685,18.732,14.992c2.83,7.765,0.172,16.261-3.469,23.223c-5.777,11.05-15.846,17.99-26.156,24.504 c-13.445,8.496-28.273,14.678-43.75,18.379c-35.196,8.417-71.896,7.876-106.699-2.158c-23.821-6.867-44.934-20.295-68.709-27.2 c-8.599-2.498-17.632-4.188-26.547-5.055c-4.273-0.416-8.731-0.991-12.979-0.049c-1.828,0.405-3.908,0.951-5.316,2.206" fill="none" stroke="#f8a9ac" stroke-miterlimit="10" stroke-width="3"/></svg>
     </div>
   </div>
   <MenuComponent v-if="store.showingMenu"></MenuComponent>
+  <ShopCart v-if="cart.showingCart"></ShopCart>
   </main>
 </template>
 
@@ -375,39 +389,6 @@
     cursor:default;
   }
 
-  .button a{
-    color: black;
-  }
-
-  .button img {
-    width: 110%;
-    height: 110%;
-    object-fit: cover;
-    transition: background ease 1s;
-    cursor: pointer;
-  }
-
-  .button p {
-    position: absolute;
-    text-wrap: nowrap;
-    font-size: 130%;
-    z-index: 2;
-    top: 45%;
-    left: 55%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    transition: color ease 1s;
-    cursor: pointer;
-  }
-
-  .button:hover img{
-    background-color: #CDA349;
-  }
-
-  .button:hover p{
-    color: white;
-  }
-
   .footer-container{
     position:relative;
     top: 35vh;
@@ -476,17 +457,7 @@
     .button{
       width: auto;
       height: 3vh;
-      top: 10vh;
-    }
-
-    .button img{
-      height: 170%;
-      width: 14rem;
-      object-fit: unset;
-    }
-
-    .button p{
-      left: 50%;
+      margin-bottom: 5vh;
     }
 
     .heart svg{

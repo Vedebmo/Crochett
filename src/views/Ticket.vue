@@ -247,60 +247,11 @@
                 </div>
             </div>
         </div>
-        <div class="button" id="button">
-          <img src="@/assets/Frame.webp" alt="Botón">
-          <p>Comprar</p>
-        </div>
+        <Button></Button>
     </div>
 </template>
 
 <style scoped>
-
-    .button {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-decoration: none;
-        z-index: 1;
-        width: 50%;
-        cursor:default;
-        margin: 5% auto;
-    }
-
-    .button a{
-        color: black;
-    }
-
-    .button img {
-        width: 90%;
-        height: 90%;
-        object-fit: cover;
-        transition: background ease 1s;
-        cursor: pointer;
-    }
-
-    .button p {
-        position: absolute;
-        text-wrap: nowrap;
-        font-size: 130%;
-        z-index: 2;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        transition: color ease 1s;
-        cursor: pointer;
-    }
-
-    .button:hover img{
-        background-color: #CDA349;
-    }
-
-    .button:hover p{
-        color: white;
-    }
-
     .products-resume{
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -377,6 +328,10 @@
         display: none
     }
 
+    .button{
+        margin: auto;
+    }
+
     @media screen and (min-width: 601px) {
         .pc{
             display: flex;
@@ -407,21 +362,6 @@
 
         .label-container{
             align-items: center;
-        }
-
-        .button{
-            width: auto;
-            height: 3vh;
-        }
-
-        .button img{
-            height: 170%;
-            width: 14rem;
-            object-fit: unset;
-        }
-
-        .button p{
-            left: 50%;
         }
 
         .pc-parent {
@@ -478,6 +418,7 @@
 <script setup>
     import { onMounted } from "vue";
     import Back  from "@/components/Back.vue";
+    import Button from "@/components/Button.vue";
 
     onMounted(()=>{
         const selects = [document.getElementById('state'), document.getElementById('pc-state')]
