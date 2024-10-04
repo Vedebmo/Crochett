@@ -7,12 +7,14 @@
             <br>
             <p id="text"></p>
         </div>
-        <Button :text="'Subir'" @click="console.log('Hola')"></Button>
+        <Button :text="'Subir'" @click="store.ulpoadExcel()"></Button>
     </div>
 </template>
 
 <script setup>
     import Button from '@/components/Button.vue';
+    import { Store } from '@/Stores/Store.js'
+    const store = Store()
     function detected() {
         document.getElementById('text').innerText = document.getElementById('fileUpload').files[0].name
     }

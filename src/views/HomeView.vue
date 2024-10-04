@@ -226,6 +226,8 @@
     width: 100vw;
     height: 35vh;
     z-index: -1;
+    object-fit: cover;
+    object-position: 80%;
   }
 
   nav{
@@ -264,7 +266,7 @@
   }
 
   .intro{
-    width: 60vw;
+    width: 42vw;
     font-size: 0.8em;
   }
 
@@ -360,6 +362,10 @@
     top: 36vh;
   }
 
+  .row{
+    margin: 2% auto;
+  }
+
   .instructions{
     display: flex;
     flex-wrap: wrap;
@@ -414,8 +420,14 @@
   }
 
   @media screen and (min-width: 601px) {
+    .background{
+      object-fit:  initial;
+      object-position: initial;
+    }
+
     .intro{
       font-size: 2vh;
+      width: 60vw;
     }
 
     nav{
