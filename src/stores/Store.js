@@ -3,18 +3,17 @@ import { defineStore } from 'pinia'
 import { init } from '../firebase.js';
 init()
 
-import { getStorage, uploadBytes, ref, getDownloadURL } from 'firebase/storage'
+import { getStorage, uploadBytes, ref, listAll } from 'firebase/storage'
 const storage = getStorage();
 const storageRef = ref(storage, '/Excel/Archivo');
 import * as XLSX from 'xlsx';
 
 import { getAuth, GoogleAuthProvider, setPersistence, browserLocalPersistence, signInWithPopup } from 'firebase/auth';
 
-
 export const Store = defineStore('Store', {
   state: () => ({
     showingMenu: false,
-    classes: ["Stock", "Floristería", "Combos", "Peluches y Llaveros", "Navidad", "Agrégale a tu pedido", "Ropa Tejida"],
+    classes: [],
     headersTitles: [],
     products: []
   }),
@@ -105,6 +104,18 @@ export const Store = defineStore('Store', {
       })
       .then(()=>{
         alert("Listo, archivo subido")
+      })
+    },
+
+    getClasses(){
+      const storageRef = ref(storage, '/');
+      listAll(storageRef)
+      .then((res)=>{
+        res.prefixes.forEach((category)=>{
+          if(category.name !== 'Excel' && category.name !== "Productos"){
+            this.classes.push(category.name)
+          }
+        })
       })
     }
   }

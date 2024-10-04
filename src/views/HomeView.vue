@@ -7,7 +7,9 @@
   const store = Store()
   const cart = Cart()
   import { onMounted } from "vue";
-  onMounted(()=>{
+
+  onMounted(async ()=>{
+    await store.getClasses()
     let translate = 0;
 
     let toTranslate
@@ -53,6 +55,12 @@
           visibleItems.push(item);
         }
       });
+      if (carouselItems.length > 0 && arrow) {}
+      else{
+        setTimeout(()=>{
+          checkVisibleItems()
+        },500)
+      }
     }
 
     checkVisibleItems()
