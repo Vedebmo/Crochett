@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { init } from '../firebase.js';
 init()
 
-import { getStorage, uploadBytes, ref, listAll } from 'firebase/storage'
+import { getStorage, uploadBytes, ref, listAll, getDownloadURL } from 'firebase/storage'
 const storage = getStorage();
 const storageRef = ref(storage, '/Excel/Archivo');
 import * as XLSX from 'xlsx';
@@ -13,9 +13,11 @@ import { getAuth, GoogleAuthProvider, setPersistence, browserLocalPersistence, s
 export const Store = defineStore('Store', {
   state: () => ({
     showingMenu: false,
+    dataLoaded: false,
     classes: [],
     headersTitles: [],
-    products: []
+    products: [],
+    productsToShow: []
   }),
 
   actions:{
@@ -120,7 +122,7 @@ export const Store = defineStore('Store', {
                 if (!this[header]) {
                   this[header] = []; // initialize the property as an empty array
                 }
-                this[header].push(`${product[2]}, `)
+                this[header].push(`${product[2]} - ${product[3]}, `)
               }
             });
           });
@@ -153,8 +155,24 @@ export const Store = defineStore('Store', {
       })
     },
 
-    getProducts(category){
-      const storageRef = ref(storage, `${category}`);
+    async getProducts(category) {
+      this.productsToShow = []
+      const storageRef = ref(storage, `${category}/${category}.txt`);
+      const url = await getDownloadURL(storageRef)
+      const response = await fetch(url)
+      let data = await response.text()
+      data = data.split(', ').slice(0, -1); // split and remove the last element
+      this[category] = data
+
+      for (let index = 0; index < data.length; index++) {
+        const productRef = ref(storage, `/Productos/${data[index]}/info.json`);
+        const productUrl = await getDownloadURL(productRef)
+        const productResponse = await fetch(productUrl)
+        const productData = await productResponse.json()
+        this.productsToShow.push(productData)
+      }
+
+      this.dataLoaded = true
     }
   }
 })

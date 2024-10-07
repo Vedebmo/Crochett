@@ -1,5 +1,14 @@
 <script setup>
+    import { useRoute } from 'vue-router';
+    const $route = useRoute();
     import Back  from "@/components/Back.vue";
+    import {Store} from "@/stores/Store.js"
+    const store = Store()
+    import { onBeforeMount } from "vue";
+
+    onBeforeMount(async ()=>{
+        await store.getProducts(`${$route.params.class}`)
+    })
 </script>
 
 <template>
@@ -10,71 +19,18 @@
     </div>
 
     <div class="product-parent">
-        <div class="products">
-            <router-link class="product-container link" :to="{path: '/'}">
+        <div class="products" v-if="store.dataLoaded">
+            <router-link class="product-container link" :to="{path: `/Producto/${product}`}" v-for="(product,index) in store[$route.params.class]">
                 <div class="product-container">
-                    <img src="https://picsum.photos/200/300" alt="product image">
+                    <img src="https://picsum.photos/200/300" alt="Imagén del producto">
                     <br>
-                    <h4>Producto</h4>
-                    <p>Precio: 8$ / 348 Bs</p>
+                    <h4>{{product.split("- ")[1]}}</h4>
+                    <p>Precio: {{store.productsToShow[index][9]}}$ / {{store.productsToShow[index][10]}} Bs</p>
                 </div>
             </router-link>
-            <router-link class="product-container link" :to="{path: '/'}">
-                <div class="product-container">
-                    <img src="https://picsum.photos/200/300" alt="">
-                    <br>
-                    <h4>Producto</h4>
-                    <p>Precio: 8$ / 348 Bs</p>
-                </div>
-            </router-link>
-            <router-link class="product-container link" :to="{path: '/'}">
-                <div class="product-container">
-                    <img src="https://picsum.photos/200/300" alt="">
-                    <br>
-                    <h4>Producto</h4>
-                    <p>Precio: 8$ / 348 Bs</p>
-                </div>
-            </router-link>
-            <router-link class="product-container link" :to="{path: '/'}">
-                <div class="product-container">
-                    <img src="https://picsum.photos/200/300" alt="">
-                    <br>
-                    <h4>Producto</h4>
-                    <p>Precio: 8$ / 348 Bs</p>
-                </div>
-            </router-link>
-            <router-link class="product-container link" :to="{path: '/'}">
-                <div class="product-container">
-                    <img src="https://picsum.photos/200/300" alt="">
-                    <br>
-                    <h4>Producto</h4>
-                    <p>Precio: 8$ / 348 Bs</p>
-                </div>
-            </router-link>
-            <router-link class="product-container link" :to="{path: '/'}">
-                <div class="product-container">
-                    <img src="https://picsum.photos/200/300" alt="">
-                    <br>
-                    <h4>Producto</h4>
-                    <p>Precio: 8$ / 348 Bs</p>
-                </div>
-            </router-link>
-            <router-link class="product-container link" :to="{path: '/'}">
-                <div class="product-container">
-                    <img src="https://picsum.photos/200/300" alt="">
-                    <br>
-                    <h4>Producto</h4>
-                    <p>Precio: 8$ / 348 Bs</p>
-                </div>
-            </router-link>
-            <router-link class="product-container link" :to="{path: '/'}">
-                <div class="product-container">
-                    <img src="https://picsum.photos/200/300" alt="">
-                    <br>
-                    <h4>Producto</h4>
-                    <p>Precio: 8$ / 348 Bs</p>
-                </div>
-            </router-link>
+        </div>
+        <div v-else>
+            Cargando...
         </div>
     </div>
 </template>
