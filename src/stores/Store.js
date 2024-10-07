@@ -85,6 +85,7 @@ export const Store = defineStore('Store', {
     },
 
     update(file) {
+      let keyToHeader = {};
       uploadBytes(storageRef, file)
       .then(() => {
         this.headersTitles.forEach((header,index) => {
@@ -96,10 +97,43 @@ export const Store = defineStore('Store', {
         });
       })
       .then(()=>{
+        for (let header of this.headersTitles) {
+          let variableName = header.replace(/\s+/g, ''); // remove spaces and create a valid variable name
+
+          this[variableName] = []; // create a property on the current object
+        }
+
+        let offset = 4
+        for (let i = 7; i < this.headersTitles.length; i++) {
+          keyToHeader[i+offset] = this.headersTitles[i]; // assuming keys start from 1
+          offset++
+        }
+
         this.products.forEach((product, index) => {
           const productJson = JSON.stringify(product);
+          const productArray = Object.keys(product).map((key) => ({ [key]: product[key] }));
+
+          productArray.forEach((obj) => {
+            Object.keys(obj).forEach((key) => {
+              if (parseInt(key) > 10) {
+                const header = keyToHeader[parseInt(key)]
+                if (!this[header]) {
+                  this[header] = []; // initialize the property as an empty array
+                }
+                this[header].push(`${product[2]}, `)
+              }
+            });
+          });
+
           const productRef = ref(storage, `/Productos/${index + 1} - ${product[3]}/info.json`);
           uploadBytes(productRef, new TextEncoder().encode(productJson))
+        })
+      })
+      .then(()=>{
+        Object.values(keyToHeader).forEach((header)=>{
+          const file = new File(this[header], `${header}.txt`, {type: "text/plain"})
+          const storageRef = ref(storage,`${header}/${header}.txt`)
+          uploadBytes(storageRef, file)
         })
       })
       .then(()=>{
@@ -117,6 +151,10 @@ export const Store = defineStore('Store', {
           }
         })
       })
+    },
+
+    getProducts(category){
+      const storageRef = ref(storage, `${category}`);
     }
   }
 })

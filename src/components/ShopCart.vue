@@ -78,6 +78,12 @@
         height: -webkit-fill-available;
     }
 
+    @media screen and (min-width: 601px) and (max-width: 1200px){
+        .parent{
+            width: 75vw !important
+        }
+    }
+
     @media screen and (min-width: 601px){
         .shop{
             position: fixed;

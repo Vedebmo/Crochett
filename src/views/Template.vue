@@ -5,7 +5,7 @@
 <template>
     <Back></Back>
     <div class="row">
-      <h2>{{$route.params.class}}</h2>
+      <h2 style="text-align: center; text-wrap: nowrap;">{{$route.params.class}}</h2>
       <hr>
     </div>
 
