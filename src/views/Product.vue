@@ -4,6 +4,8 @@
   import ShopCart  from "@/components/ShopCart.vue";
   import { Cart } from "@/Stores/Cart.js";
   import Button from "@/components/Button.vue";
+  import {Store} from "@/stores/Store.js"
+  const store = Store()
   const cart = Cart()
   const showModal = ref(false);
   const largeImage = ref('');
@@ -12,6 +14,12 @@
     largeImage.value = imageUrl;
     showModal.value = true;
   }
+
+  import { onMounted } from "vue";
+
+  onMounted(async ()=>{
+    cart.toAdd = 1
+  })
 </script>
 
 <template>
@@ -31,25 +39,23 @@
       </div>
     </div>
     <div class="right">
-      <h1>Girasol y perfume</h1>
-      <p>Precio: 8$/ 348 Bs</p>
+      <h1>{{$route.query.productInfo[3]}}</h1>
+      <p>Precio: {{$route.query.productInfo[9]}}$ / {{$route.query.productInfo[10]}} Bs</p>
       <div class="description">
         <p>
           Descripción:
         </p>
         <p style="margin-top: 10px;">
-          Pedido disponible por encargo, con una semana y media de anticipación
+          {{$route.query.productInfo[5]}}
         </p>
         <br>
         <p class="incluye">
           Incluye:
-          Girasol de 15 cm de diametro
-          Perfume
-          Caja 26x20x9 cm
+          {{$route.query.productInfo[7]}}
         </p>
       </div>
       <div class="row-buttons">
-        <Button @click="cart.toogleCart"></Button>
+        <Button @click="cart.toogleCart(['Add',$route.query.productInfo])"></Button>
         <div class="amount">
           <span @click="cart.ChangeAdd('less')">-</span>
           <span>{{cart.toAdd}}</span>

@@ -9,7 +9,9 @@
   import { onMounted } from "vue";
 
   onMounted(async ()=>{
-    await store.getClasses()
+    if(store.classes.length == 0){
+      await store.getClasses()
+    }
     let translate = 0;
 
     let toTranslate
@@ -34,8 +36,8 @@
       }
 
       if(cart.showingCart){
-        cart.toogleCart()
-        cart.toogleCart()
+        cart.toogleCart({})
+        cart.toogleCart({})
       }
 
       document.documentElement.clientWidth < 601 ? toTranslate = 107.5 : toTranslate = 105.5
@@ -129,7 +131,7 @@
   }
   function toggleCart() {
     store.showingMenu ? store.toogleMenu() : ""
-    cart.toogleCart();
+    cart.toogleCart({});
   }
 </script>
 

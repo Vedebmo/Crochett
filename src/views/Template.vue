@@ -4,9 +4,14 @@
     import Back  from "@/components/Back.vue";
     import {Store} from "@/stores/Store.js"
     const store = Store()
+
+    import { Cart } from "@/Stores/Cart.js";
+    const cart = Cart()
+
     import { onBeforeMount } from "vue";
 
     onBeforeMount(async ()=>{
+        store.dataLoaded = false
         await store.getProducts(`${$route.params.class}`)
     })
 </script>
@@ -20,7 +25,7 @@
 
     <div class="product-parent">
         <div class="products" v-if="store.dataLoaded">
-            <router-link class="product-container link" :to="{path: `/Producto/${product}`}" v-for="(product,index) in store[$route.params.class]">
+            <router-link class="product-container link" :to="{path: `/Producto/${product}`, query:{productInfo: store.productsToShow[index] }}" v-for="(product,index) in store[$route.params.class]">
                 <div class="product-container">
                     <img src="https://picsum.photos/200/300" alt="Imagén del producto">
                     <br>

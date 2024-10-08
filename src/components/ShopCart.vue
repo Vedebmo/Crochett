@@ -23,14 +23,13 @@
                     Tu Carrito:
                 </legend>
 
-                <Item :name="'Girasol'" :price$="8" :priceBs="348"></Item>
-                <Item :name="'Perfume'" :price$="8" :priceBs="348"></Item>
+                <Item v-for="(product, index) in cart.productsCart" :id="index" :name="product[1][1]" :price$="product[1][2]" :priceBs="product[1][3]"></Item>
 
                 <div style="margin-top: auto">
                     <p style="text-align: center; font-size: 1.5rem;">
                         Total a pagar:
                         <br>
-                        16$ ó 696Bs
+                        {{cart.total$}}$ ó {{cart.totalBs}}Bs
                     </p>
                     <Button style="margin: 5% auto;"></Button>
                 </div>
