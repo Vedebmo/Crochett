@@ -16,7 +16,7 @@ const router = createRouter({
     {
       path: '/' + encodeURI('Categoría/:class'),
       name: 'template',
-      component: () => import('@/views/HomeView.vue')
+      component: () => import('@/views/Template.vue')
     },
     {
       path: '/Producto/:product',

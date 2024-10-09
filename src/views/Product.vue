@@ -19,9 +19,14 @@
 
   import { onMounted, onBeforeMount } from "vue";
 
-  onBeforeMount(()=>{
+  onBeforeMount(async ()=>{
     if($route.query.productInfo == null ||$route.query.productInfo == undefined){
-      store.getInfo($route.params.product)
+      const data = await store.getInfo($route.params.product)
+      store.isLoading = false
+      $route.query.productInfo = data
+    }
+    else{
+      store.isLoading = false
     }
   })
 
@@ -31,50 +36,55 @@
 </script>
 
 <template>
-  <Back class="arrow"></Back>
-  <ShopCart v-if="cart.showingCart"></ShopCart>
-  <div class="product-container">
-    <div class="left">
-      <div class="main-image">
-        <img @click="showLargeImage('https://zeromotorcycles.com/_next/image?url=https%3A%2F%2Fimages.prismic.io%2Fzero-cms-disco%2F9ddb733e-225b-4bf7-bf41-72d36c6f4272_S_MY24.2.jpg%3Fauto%3Dcompress%2Cformat&w=3840&q=75')" src="https://zeromotorcycles.com/_next/image?url=https%3A%2F%2Fimages.prismic.io%2Fzero-cms-disco%2F9ddb733e-225b-4bf7-bf41-72d36c6f4272_S_MY24.2.jpg%3Fauto%3Dcompress%2Cformat&w=3840&q=75" alt="product image">
-      </div>
-      <div class="small-images">
-        <img @click="showLargeImage('https://picsum.photos/200/300')" src="https://picsum.photos/200/300" alt="product image">
-
-        <img @click="showLargeImage('https://picsum.photos/200/300')" src="https://picsum.photos/200/300" alt="product image">
-
-        <img @click="showLargeImage('https://picsum.photos/200/300')" src="https://picsum.photos/200/300" alt="product image">
-      </div>
-    </div>
-    <div class="right">
-      <h1>{{$route.query.productInfo[3]}}</h1>
-      <p>Precio: {{$route.query.productInfo[9]}}$ / {{$route.query.productInfo[10]}} Bs</p>
-      <div class="description">
-        <p>
-          Descripción:
-        </p>
-        <p style="margin-top: 10px;">
-          {{$route.query.productInfo[5]}}
-        </p>
-        <br>
-        <p class="incluye">
-          Incluye:
-          {{$route.query.productInfo[7]}}
-        </p>
-      </div>
-      <div class="row-buttons">
-        <Button @click="cart.toogleCart(['Add',$route.query.productInfo])"></Button>
-        <div class="amount">
-          <span @click="cart.ChangeAdd('less')">-</span>
-          <span>{{cart.toAdd}}</span>
-          <span @click="cart.ChangeAdd('more')">+</span>
+  <div v-if="store.isLoading">
+    Cargando...
+  </div>
+  <div v-else>
+    <Back class="arrow"></Back>
+    <ShopCart v-if="cart.showingCart"></ShopCart>
+    <div class="product-container">
+      <div class="left">
+        <div class="main-image">
+          <img @click="showLargeImage('https://zeromotorcycles.com/_next/image?url=https%3A%2F%2Fimages.prismic.io%2Fzero-cms-disco%2F9ddb733e-225b-4bf7-bf41-72d36c6f4272_S_MY24.2.jpg%3Fauto%3Dcompress%2Cformat&w=3840&q=75')" src="https://zeromotorcycles.com/_next/image?url=https%3A%2F%2Fimages.prismic.io%2Fzero-cms-disco%2F9ddb733e-225b-4bf7-bf41-72d36c6f4272_S_MY24.2.jpg%3Fauto%3Dcompress%2Cformat&w=3840&q=75" alt="product image">
+        </div>
+        <div class="small-images">
+          <img @click="showLargeImage('https://picsum.photos/200/300')" src="https://picsum.photos/200/300" alt="product image">
+  
+          <img @click="showLargeImage('https://picsum.photos/200/300')" src="https://picsum.photos/200/300" alt="product image">
+  
+          <img @click="showLargeImage('https://picsum.photos/200/300')" src="https://picsum.photos/200/300" alt="product image">
         </div>
       </div>
-    </div>
-    <div class="modal" v-if="showModal" @click="showModal = false">
-      <div class="modal-content" @click.stop>
-        <img :src="largeImage" alt="Imagen">
-        <button @click="showModal = false">Cerrar</button>
+      <div class="right">
+        <h1>{{$route.query.productInfo[3]}}</h1>
+        <p>Precio: {{$route.query.productInfo[9]}}$ / {{$route.query.productInfo[10]}} Bs</p>
+        <div class="description">
+          <p>
+            Descripción:
+          </p>
+          <p style="margin-top: 10px;">
+            {{$route.query.productInfo[5]}}
+          </p>
+          <br>
+          <p class="incluye">
+            Incluye:
+            {{$route.query.productInfo[7]}}
+          </p>
+        </div>
+        <div class="row-buttons">
+          <Button @click="cart.toogleCart(['Add',$route.query.productInfo])"></Button>
+          <div class="amount">
+            <span @click="cart.ChangeAdd('less')">-</span>
+            <span>{{cart.toAdd}}</span>
+            <span @click="cart.ChangeAdd('more')">+</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal" v-if="showModal" @click="showModal = false">
+        <div class="modal-content" @click.stop>
+          <img :src="largeImage" alt="Imagen">
+          <button @click="showModal = false">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>

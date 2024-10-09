@@ -22,7 +22,8 @@ export const Store = defineStore('Store', {
     classes: [],
     headersTitles: [],
     products: [],
-    productsToShow: []
+    productsToShow: [],
+    isLoading: true
   }),
 
   actions:{
@@ -288,9 +289,12 @@ export const Store = defineStore('Store', {
       document.querySelector("#search-modal").style = "display: none"
     },
 
-    getInfo(id){
-      console.log(id)
-      return id
+    async getInfo(id) {
+      const storageRef = ref(storage, `/Productos/${id}/info.json`);
+      const url = await getDownloadURL(storageRef);
+      const response = await fetch(url);
+      const data = await response.json();
+      return data;
     }
   }
 })
