@@ -144,7 +144,7 @@
       <span> <img src="@/assets/Logo.png" alt="Crochett Accesories"></span>
       <section>
         <span class="icon-search" id="search">
-          <input type="text" placeholder="Buscar artículo" style="display: none;" id="input">
+          <input type="search" placeholder="Buscar artículo" style="display: none;" id="input" @keypress="store.search($event)">
         </span>
         <span class="icon-cart" @click="toggleCart"></span>
       </section>
@@ -218,6 +218,16 @@
   </div>
   <MenuComponent v-if="store.showingMenu"></MenuComponent>
   <ShopCart v-if="cart.showingCart"></ShopCart>
+
+  <div id="search-modal" class="modal">
+    <div class="modal-content">
+      <fieldset>
+        <legend><span @click='store.closeSearch()' style="color: red; cursor: pointer">X</span></legend>
+        <h2 style="text-decoration: underline;">Resultados encontrados:</h2>
+        <ul id="search-results"></ul>
+      </fieldset>
+    </div>
+</div>
   </main>
 </template>
 
@@ -427,6 +437,68 @@
 
   body {
     overflow-x: hidden;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+  }
+
+  .modal-content {
+    background-color: #f9f9f9;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    height: 82vh;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+  }
+
+  #search-modal.show {
+    display: grid !important;
+  }
+
+  fieldset[data-v-b4e148ca] {
+    height: 90%;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1.5px solid #cda349;
+    padding: 37px 27px;
+  }
+
+  fieldset h2{
+    position: relative;
+    bottom: 40px;
+    right: 15px;
+  }
+
+  fieldset ul{
+    position: relative;
+    bottom: 30px;
+  }
+
+  legend{
+    padding: 5px 10px;
+    font-size: 1.5rem;
+  }
+
+  #search-results{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    list-style: none
   }
 
   @media screen and (min-width: 601px) {

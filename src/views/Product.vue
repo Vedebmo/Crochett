@@ -5,6 +5,8 @@
   import { Cart } from "@/Stores/Cart.js";
   import Button from "@/components/Button.vue";
   import {Store} from "@/stores/Store.js"
+  import { useRoute } from 'vue-router';
+  const $route = useRoute();
   const store = Store()
   const cart = Cart()
   const showModal = ref(false);
@@ -15,7 +17,13 @@
     showModal.value = true;
   }
 
-  import { onMounted } from "vue";
+  import { onMounted, onBeforeMount } from "vue";
+
+  onBeforeMount(()=>{
+    if($route.query.productInfo == null ||$route.query.productInfo == undefined){
+      store.getInfo($route.params.product)
+    }
+  })
 
   onMounted(async ()=>{
     cart.toAdd = 1
