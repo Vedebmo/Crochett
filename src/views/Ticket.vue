@@ -8,27 +8,21 @@
         </div>
         <br>
         <div class="products-resume">
-            <div class="products">
-                Ramo de girasol y perfume
+
+            <div class="left">
+                <div class="products" v-for="product in cart.productsCart">
+                    {{ product[1][1] }} - {{ product[0] }} Unidad(es)
+                </div>
             </div>
-            <div class="prices">
-                8$ / 340 bs
-            </div>
-            <div class="products">
-                Ramo de girasol y perfume
-            </div>
-            <div class="prices">
-                8$ / 340 bs
-            </div>
-            <div class="products">
-                Ramo de girasol y perfume
-            </div>
-            <div class="prices">
-                8$ / 340 bs
+
+            <div class="right">
+                <div class="prices" v-for="product in cart.productsCart">
+                    {{ product[1][2] * product[0] }}$ / {{ product[1][3] * product[0] }} Bs
+                </div>
             </div>
         </div>
         <br>
-        <p class="total" style="text-align: center;">Total a pagar: 24$ ó 1020</p>
+        <p class="total" style="text-align: center;">Total a pagar: {{cart.total$}}$ ó {{cart.totalBs}} Bs</p>
 
         <div class="mobile" style="background: #cda349; margin: 10px 0;">
             <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Información de contacto</h3>
@@ -41,7 +35,7 @@
                         <input type="text" id="lastName" placeholder="Apellido">
                     </div>
                     <br>
-                    <input type="number" id="id" placeholder="Cédula" min="0">
+                    <input type="text" id="id" placeholder="Cédula. Eg: V12345678" min="0">
                     <br>
                     <input type="email" id="email" placeholder="Correo eléctronico">
                     <br>
@@ -76,7 +70,7 @@
                     <option value="Zulia">Zulia</option>
                 </select>
                     <br>
-                    <input type="number" id="phone" placeholder="Teléfono" min="0">
+                    <input type="text" id="phone" placeholder="Teléfono. Eg: 0414-1234789" min="0">
                 </form>
                 <div class="mobile" style="background: #cda349; margin: 10px 0;">
                     <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Metodos de Envío
@@ -144,7 +138,7 @@
                         <input type="text" id="pc-lastName" placeholder="Apellido">
                     </div>
                     <br>
-                    <input type="number" id="pc-id" placeholder="Cédula" min="0">
+                    <input type="text" id="pc-id" placeholder="Cédula. Eg: V12345678" min="0">
                     <br>
                     <input type="email" id="pc-email" placeholder="Correo eléctronico">
                     <br>
@@ -180,7 +174,7 @@
                         </select>
                     </div>
                     <br>
-                    <input type="number" id="pc-phone" placeholder="Teléfono" min="0">
+                    <input type="text" id="pc-phone" placeholder="Teléfono. Eg: 0414-1234789" min="0">
                 </form>
                 <div class="mobile" style="background: #cda349; margin: 10px 0;">
                     <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Metodos de Envío
@@ -247,18 +241,21 @@
                 </div>
             </div>
         </div>
-        <Button></Button>
+        <br>
+        <Button @click="cart.validate()"></Button>
+        <br>
     </div>
 </template>
 
 <style scoped>
     .products-resume{
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        grid-column-gap: 0px;
-        text-align: center;
-        grid-row-gap: 10px;
+        display: flex;
+        gap: 20%;
+        justify-content: center;
+    }
+
+    .prices, .products{
+        margin: 12px 0;
     }
 
     .prices, .products, .total{
@@ -301,7 +298,7 @@
         height: 16px;
         border: 2px solid #cda349;
         margin:0 2px 0 0;
-        transition: .5s all ease;
+        transition: .1s all ease;
     }
 
     .labels{
@@ -329,7 +326,7 @@
     }
 
     .button{
-        margin: auto;
+        margin: 0 auto 7%;
     }
 
     @media screen and (min-width: 601px) {
@@ -412,6 +409,10 @@
             margin-top: 2%;
             font-size: 0.85rem;
         }
+
+        .products-resume{
+            gap: 50%;
+        }
     }
 </style>
 
@@ -419,8 +420,14 @@
     import { onMounted } from "vue";
     import Back  from "@/components/Back.vue";
     import Button from "@/components/Button.vue";
+    import { Cart } from "@/Stores/Cart";
+    const cart = Cart()
 
     onMounted(()=>{
+        if(cart.productsCart.length == 0){
+            alert("Tu carrito está vacio")
+            window.history.back()
+        }
         const selects = [document.getElementById('state'), document.getElementById('pc-state')]
         const states = selects.map(() => ({ opened: false, changed: false }))
 

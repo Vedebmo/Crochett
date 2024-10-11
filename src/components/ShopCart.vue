@@ -31,7 +31,7 @@
                         <br>
                         {{cart.total$}}$ ó {{cart.totalBs}}Bs
                     </p>
-                    <Button style="margin: 5% auto;"></Button>
+                    <Button style="margin: 5% auto;" @click="cart.buy()"></Button>
                 </div>
             </fieldset>
         </div>
