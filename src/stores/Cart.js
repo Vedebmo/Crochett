@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import router from '../router'
+import emailjs from '@emailjs/browser';
 
 export const Cart = defineStore('Cart', {
   state: () => ({
@@ -8,7 +9,8 @@ export const Cart = defineStore('Cart', {
     toAdd: 1,
     productsCart: [],
     total$: 0,
-    totalBs: 0
+    totalBs: 0,
+    formData: {}
   }),
 
   actions:{
@@ -138,7 +140,7 @@ export const Cart = defineStore('Cart', {
         errors.push('Estado es requerido');
       }
 
-      const regexPhone = /^0(414|412|416|xxx|161|171)-[0-9]{7}$/
+      const regexPhone = /^0(414|412|416|424|xxx|161|171)-[0-9]{7}$/
 
       if (!regexPhone.test(mobilePhone.value) && !regexPhone.test(pcPhone.value)) {
         errors.push('Teléfono es requerido y debe tener el formato correcto');
@@ -154,14 +156,62 @@ export const Cart = defineStore('Cart', {
 
       if (errors.length > 0) {
         alert(errors.join('\n'));
-        return false;
+        // return false;
+      }
+
+      if (mobileName.value) {
+        this.formData.name = mobileName.value;
+        this.formData.lastName = mobileLastName.value;
+        this.formData.id = mobileId.value;
+        this.formData.email = mobileEmail.value;
+        this.formData.address = mobileAddress.value;
+        this.formData.city = mobileCity.value;
+        this.formData.state = mobileState.value;
+        this.formData.phone = mobilePhone.value;
+        this.formData.delivery = mobileDelivery.value;
+        this.formData.pay = mobilePay.value;
+      } else {
+        this.formData.name = pcName.value;
+        this.formData.lastName = pcLastName.value;
+        this.formData.id = pcId.value;
+        this.formData.email = pcEmail.value;
+        this.formData.address = pcAddress.value;
+        this.formData.city = pcCity.value;
+        this.formData.state = pcState.value;
+        this.formData.phone = pcPhone.value;
+        this.formData.delivery = pcDelivery.value;
+        this.formData.pay = pcPay.value;
       }
 
       this.sendTicket()
     },
 
     sendTicket(){
-      console.log('Send Ticket')
+      let productsList = `<ul>${this.productsCart.map((product) => {
+        return `<li>${product[1][1]} - ${product[0]} Unidad(es) - ${product[1][2] * product[0]}$ / ${product[1][3] * product[0]} Bs</li>`;
+      }).join('')}</ul>`
+
+      let params = {
+        toEmail: this.formData.email,
+        products: productsList,
+        price$: this.total$,
+        priceBs: this.totalBs,
+        html: true
+      }
+
+      emailjs.init({
+        publicKey: "2y11hxIM5PO5Jrdux",
+      })
+
+      emailjs.send('service_bhdgl7o', 'template_e76ijex',params).then(() => {
+        console.log('SUCCESS!');
+        //Send the email to crochett
+        //REMEMBER TO ACTIVATE THE RETURN AGAIN!
+      })
+
+
+
+
     }
   }
 })

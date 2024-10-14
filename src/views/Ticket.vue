@@ -37,7 +37,7 @@
                     <br>
                     <input type="text" id="id" placeholder="Cédula. Eg: V12345678" min="0">
                     <br>
-                    <input type="email" id="email" placeholder="Correo eléctronico">
+                    <input type="email" id="email" placeholder="Correo electrónico">
                     <br>
                     <input type="text" id="address" placeholder="Dirección">
                     <br>
@@ -73,7 +73,7 @@
                     <input type="text" id="phone" placeholder="Teléfono. Eg: 0414-1234789" min="0">
                 </form>
                 <div class="mobile" style="background: #cda349; margin: 10px 0;">
-                    <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Metodos de Envío
+                    <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Métodos de Envío
                     </h3>
                 </div>
                 <div>
@@ -98,7 +98,7 @@
                     </div>
                 </div>
                 <div class="mobile" style="background: #cda349; margin: 10px 0;">
-                    <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Metodos de pago
+                    <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Métodos de pago
                     </h3>
                 </div>
                 <div>
@@ -130,8 +130,8 @@
             </div>
             <div class="pc pc-parent">
                 <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Información de contacto</h3>
-                <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Metodos de Envío</h3>
-                <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Metodos de pago</h3>
+                <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Métodos de Envío</h3>
+                <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Métodos de pago</h3>
                 <form>
                     <div class="row names">
                         <input type="text" id="pc-name" placeholder="Nombre">
@@ -140,7 +140,7 @@
                     <br>
                     <input type="text" id="pc-id" placeholder="Cédula. Eg: V12345678" min="0">
                     <br>
-                    <input type="email" id="pc-email" placeholder="Correo eléctronico">
+                    <input type="email" id="pc-email" placeholder="Correo electrónico">
                     <br>
                     <input type="text" id="pc-address" placeholder="Dirección">
                     <br>
@@ -177,7 +177,7 @@
                     <input type="text" id="pc-phone" placeholder="Teléfono. Eg: 0414-1234789" min="0">
                 </form>
                 <div class="mobile" style="background: #cda349; margin: 10px 0;">
-                    <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Metodos de Envío
+                    <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Métodos de Envío
                     </h3>
                 </div>
                 <div>
@@ -236,7 +236,7 @@
                     </div>
                 </div>
                 <div class="mobile" style="background: #cda349; margin: 10px 0;">
-                    <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Metodos de pago
+                    <h3 style="text-align: center;font-weight:100; font-family: 'Belleza'; padding: 2%">Métodos de pago
                     </h3>
                 </div>
             </div>
