@@ -53,19 +53,20 @@
                     <option value="Bolivar">Bolívar</option>
                     <option value="Carabobo">Carabobo</option>
                     <option value="Cojedes">Cojedes</option>
-                    <option value="Delta_Amacuro">Delta Amacuro</option>
+                    <option value="Delta Amacuro">Delta Amacuro</option>
+                    <option value="Distrito Capital">Distrito Capital</option>
                     <option value="Falcon">Falcón</option>
                     <option value="Guarico">Guárico</option>
                     <option value="Lara">Lara</option>
                     <option value="Merida">Mérida</option>
                     <option value="Miranda">Miranda</option>
                     <option value="Monagas">Monagas</option>
-                    <option value="Nueva_Esparta">Nueva Esparta</option>
+                    <option value="Nueva Esparta">Nueva Esparta</option>
                     <option value="Portuguesa">Portuguesa</option>
                     <option value="Sucre">Sucre</option>
                     <option value="Tachira">Táchira</option>
                     <option value="Trujillo">Trujillo</option>
-                    <option value="La_Guaira">La Guaira</option>
+                    <option value="La Guaira">La Guaira</option>
                     <option value="Yaracuy">Yaracuy</option>
                     <option value="Zulia">Zulia</option>
                 </select>
@@ -79,20 +80,20 @@
                 <div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="personal" name="delivery" value="personal">
+                            <input type="radio" id="personal" name="delivery" value="Entrega Personal">
                             <label for="personal">Entrega Personal</label>
                             <br>
                         </div>
                     </div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="delivery" name="delivery" value="delivery">
+                            <input type="radio" id="delivery" name="delivery" value="Delivery">
                             <label for="delivery">Delivery</label><br>
                         </div>
                     </div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="national" name="delivery" value="national">
+                            <input type="radio" id="national" name="delivery" value="Envío Nacional">
                             <label for="national">Envío Nacional</label>
                         </div>
                     </div>
@@ -104,25 +105,25 @@
                 <div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="bank" name="pay" value="bank">
+                            <input type="radio" id="bank" name="pay" value="Pagp Movil">
                             <label for="bank">Pago Movil</label>
                         </div>
                     </div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="zinli" name="pay" value="zinli">
+                            <input type="radio" id="zinli" name="pay" value="Zinli">
                             <label for="zinli">Zinli</label><br>
                         </div>
                     </div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="cash" name="pay" value="cash">
+                            <input type="radio" id="cash" name="pay" value="Efectivo">
                             <label for="cash">Efectivo (Dólares)</label>
                         </div>
                     </div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="binance" name="pay" value="binance">
+                            <input type="radio" id="binance" name="pay" value="Binance">
                             <label for="binance">Binance</label>
                         </div>
                     </div>
@@ -156,19 +157,20 @@
                             <option value="Bolivar">Bolívar</option>
                             <option value="Carabobo">Carabobo</option>
                             <option value="Cojedes">Cojedes</option>
-                            <option value="Delta_Amacuro">Delta Amacuro</option>
+                            <option value="Delta Amacuro">Delta Amacuro</option>
+                            <option value="Distrito Capital">Distrito Capital</option>
                             <option value="Falcon">Falcón</option>
                             <option value="Guarico">Guárico</option>
                             <option value="Lara">Lara</option>
                             <option value="Merida">Mérida</option>
                             <option value="Miranda">Miranda</option>
                             <option value="Monagas">Monagas</option>
-                            <option value="Nueva_Esparta">Nueva Esparta</option>
+                            <option value="Nueva Esparta">Nueva Esparta</option>
                             <option value="Portuguesa">Portuguesa</option>
                             <option value="Sucre">Sucre</option>
                             <option value="Tachira">Táchira</option>
                             <option value="Trujillo">Trujillo</option>
-                            <option value="La_Guaira">La Guaira</option>
+                            <option value="La Guaira">La Guaira</option>
                             <option value="Yaracuy">Yaracuy</option>
                             <option value="Zulia">Zulia</option>
                         </select>
@@ -183,25 +185,25 @@
                 <div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="pc-bank" name="pay" value="bank">
+                            <input type="radio" id="pc-bank" name="pay" value="Pagp Movil">
                             <label for="pc-bank">Pago Movil</label>
                         </div>
                     </div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="pc-zinli" name="pay" value="zinli">
+                            <input type="radio" id="pc-zinli" name="pay" value="Zinli">
                             <label for="pc-zinli">Zinli</label><br>
                         </div>
                     </div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="pc-cash" name="pay" value="cash">
+                            <input type="radio" id="pc-cash" name="pay" value="Efectivo">
                             <label for="pc-cash">Efectivo (Dólares)</label>
                         </div>
                     </div>
                     <div class="labels">
                         <div class="label-container">
-                            <input type="radio" id="pc-binance" name="pay" value="binance">
+                            <input type="radio" id="pc-binance" name="pay" value="Binance">
                             <label for="pc-binance">Binance</label>
                         </div>
                     </div>
@@ -210,16 +212,16 @@
                     <div class="labels">
                         <div class="label-container label-container-delivery">
                             <div style="width: 100%;display: flex; align-items: center;">
-                                <input type="radio" id="pc-personal" name="delivery" value="personal">
+                                <input type="radio" id="pc-personal" name="delivery" value="Entrega Personal">
                                 <label for="pc-personal">Entrega Personal</label>
                             </div>
-                            <small>Miercoles: AvenidaUrdaneta a las 2:30</small>
+                            <small>Miercoles: Avenida Urdaneta a las 2:30</small>
                         </div>
                     </div>
                     <div class="labels">
                         <div class="label-container label-container-delivery">
                             <div style="width: 100%;display: flex; align-items: center;">
-                                <input type="radio" id="pc-delivery" name="delivery" value="delivery">
+                                <input type="radio" id="pc-delivery" name="delivery" value="Delivery">
                                 <label for="pc-delivery">Delivery</label><br>
                             </div>
                             <small>Con costo adicional</small>
@@ -228,7 +230,7 @@
                     <div class="labels">
                         <div class="label-container label-container-delivery">
                             <div style="width: 100%;display: flex; align-items: center;">
-                                <input type="radio" id="pc-national" name="delivery" value="national">
+                                <input type="radio" id="pc-national" name="delivery" value="Envío Nacional">
                                 <label for="pc-national">Envío Nacional</label>
                             </div>
                             <small>Realizamos envíos por zoom y tealca de lunes a Viernes de 10: a.m a 3 p.m</small>

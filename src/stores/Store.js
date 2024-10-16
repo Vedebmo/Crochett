@@ -1,4 +1,3 @@
-// import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { init } from '../firebase.js';
 import router from '../router'
@@ -23,7 +22,9 @@ export const Store = defineStore('Store', {
     headersTitles: [],
     products: [],
     productsToShow: [],
-    isLoading: true
+    isLoading: true,
+    actualSite: '',
+    previewSite: ''
   }),
 
   actions:{
@@ -163,6 +164,8 @@ export const Store = defineStore('Store', {
 
     async getProducts(category) {
       this.productsToShow = []
+      this[category] = []
+      this.actualSite = router.currentRoute.value.fullPath
       const storageRef = ref(storage, `${category}/${category}.txt`);
       const url = await getDownloadURL(storageRef)
       const response = await fetch(url)
@@ -178,7 +181,13 @@ export const Store = defineStore('Store', {
         this.productsToShow.push(productData)
       }
 
-      this.dataLoaded = true
+      if((this.previewSite == this.actualSite || this.previewSite == "") && this.actualSite !== ''){
+        this.dataLoaded = true
+      }
+      else{
+        this.previewSite = ""
+        this.productsToShow = []
+      }
     },
 
     search(e){

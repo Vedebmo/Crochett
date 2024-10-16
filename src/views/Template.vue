@@ -7,12 +7,22 @@
 
     import { Cart } from "@/Stores/Cart.js";
     const cart = Cart()
+    let previewSite = $route.fullPath
 
-    import { onBeforeMount } from "vue";
+    import { onBeforeMount, onBeforeUnmount } from "vue";
 
     onBeforeMount(async ()=>{
         store.dataLoaded = false
         await store.getProducts(`${$route.params.class}`)
+    })
+
+    onBeforeUnmount(()=>{
+        if(!store.dataLoaded){
+            store.previewSite = previewSite
+            store.actualSite = ""
+        }
+        store.dataLoaded = false
+        store.changing = true
     })
 </script>
 

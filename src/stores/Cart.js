@@ -156,7 +156,7 @@ export const Cart = defineStore('Cart', {
 
       if (errors.length > 0) {
         alert(errors.join('\n'));
-        // return false;
+        return false;
       }
 
       if (mobileName.value) {
@@ -187,6 +187,7 @@ export const Cart = defineStore('Cart', {
     },
 
     sendTicket(){
+      alert('Procesando el pago...')
       let productsList = `<ul>${this.productsCart.map((product) => {
         return `<li>${product[1][1]} - ${product[0]} Unidad(es) - ${product[1][2] * product[0]}$ / ${product[1][3] * product[0]} Bs</li>`;
       }).join('')}</ul>`
@@ -203,15 +204,33 @@ export const Cart = defineStore('Cart', {
         publicKey: "2y11hxIM5PO5Jrdux",
       })
 
-      emailjs.send('service_bhdgl7o', 'template_e76ijex',params).then(() => {
-        console.log('SUCCESS!');
-        //Send the email to crochett
-        //REMEMBER TO ACTIVATE THE RETURN AGAIN!
+      emailjs.send('service_bhdgl7o', 'template_e76ijex',params)
+      .then(() => {
+        params = {
+          products: productsList,
+          price$: this.total$,
+          priceBs: this.totalBs,
+          name: this.formData.name,
+          lastName: this.formData.lastName,
+          CI: this.formData.id,
+          email: this.formData.email,
+          city: this.formData.city,
+          address: this.formData.address,
+          state: this.formData.state,
+          phoneNumber: this.formData.phone,
+          delivery: this.formData.delivery,
+          pay: this.formData.pay
+        }
+        emailjs.send('service_bhdgl7o', 'template_rl40103',params)
+        .then(()=>{
+          alert('Tu pedido ha sido confirmado, se te ha enviado un correo con la información del encargo')
+          this.productsCart = []
+          this.total$ = 0,
+          this.totalBs = 0,
+          this.formData = {}
+          router.push('/')
+        })
       })
-
-
-
-
     }
   }
 })
