@@ -22,7 +22,7 @@
             store.actualSite = ""
         }
         store.dataLoaded = false
-        store.changing = true
+        store.imagesToShow = []
     })
 </script>
 
@@ -37,7 +37,7 @@
         <div class="products" v-if="store.dataLoaded">
             <router-link class="product-container link" :to="{path: `/Producto/${product}`, query:{productInfo: store.productsToShow[index] }}" v-for="(product,index) in store[$route.params.class]">
                 <div class="product-container">
-                    <img src="https://picsum.photos/200/300" alt="Imagén del producto">
+                    <img :src="store.imagesToShow[index]" alt="Imagén del producto">
                     <br>
                     <h4>{{product.split("- ")[1]}}</h4>
                     <p>Precio: {{store.productsToShow[index][9]}}$ / {{store.productsToShow[index][10]}} Bs</p>
@@ -99,6 +99,10 @@
 
     .product-container h4{
         font-weight: 500;
+    }
+
+    img{
+        object-fit: contain;
     }
 
     @media screen and (min-width: 601px) {

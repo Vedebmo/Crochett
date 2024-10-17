@@ -24,7 +24,10 @@ export const Store = defineStore('Store', {
     productsToShow: [],
     isLoading: true,
     actualSite: '',
-    previewSite: ''
+    previewSite: '',
+    classesImages: [],
+    imagesToShow: [],
+    imagesProduct: []
   }),
 
   actions:{
@@ -160,6 +163,30 @@ export const Store = defineStore('Store', {
           }
         })
       })
+      .then(()=> {this.getClassesImages()})
+    },
+
+    getClassesImages(){
+      this.classes.forEach((category)=>{
+        const storageRef = ref(storage, `/${category}`)
+        listAll(storageRef)
+        .then((res)=>{
+
+          res.items.forEach((item)=>{
+
+            const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+            const itemName = item.name.toLowerCase();
+
+            if (imageExtensions.some(ext => itemName.endsWith(ext))) {
+              getDownloadURL(item)
+              .then((url) => {
+                this.classesImages.push(url)
+              })
+            }
+
+          })
+        })
+      })
     },
 
     async getProducts(category) {
@@ -182,12 +209,37 @@ export const Store = defineStore('Store', {
       }
 
       if((this.previewSite == this.actualSite || this.previewSite == "") && this.actualSite !== ''){
-        this.dataLoaded = true
+        this.getProductsImages()
       }
       else{
         this.previewSite = ""
         this.productsToShow = []
       }
+    },
+
+    getProductsImages(){
+      this.productsToShow.forEach((product)=>{
+        let found = false
+        const storageRef = ref(storage, `/Productos/${product[2]} - ${product[3]}/`);
+        listAll(storageRef)
+        .then((res) => {
+          res.items.forEach((item)=>{
+            const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+            const itemName = item.name.toLowerCase();
+
+            if (imageExtensions.some(ext => itemName.endsWith(ext))) {
+              getDownloadURL(item)
+              .then((url) => {
+                if(!found){
+                  this.imagesToShow.push(url)
+                  found = true
+                }
+              })
+            }
+          })
+        })
+      })
+      this.dataLoaded = true
     },
 
     search(e){
@@ -304,6 +356,24 @@ export const Store = defineStore('Store', {
       const response = await fetch(url);
       const data = await response.json();
       return data;
+    },
+
+    getImagesProduct(id){
+      const storageRef = ref(storage, `/Productos/${id}/`);
+        listAll(storageRef)
+        .then((res) => {
+          res.items.forEach((item)=>{
+            const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+            const itemName = item.name.toLowerCase();
+
+            if (imageExtensions.some(ext => itemName.endsWith(ext))) {
+              getDownloadURL(item)
+              .then((url) => {
+                this.imagesProduct.push(url)
+              })
+            }
+          })
+        })
     }
   }
 })

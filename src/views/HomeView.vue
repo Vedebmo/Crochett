@@ -6,12 +6,15 @@
   import Button from "@/components/Button.vue";
   const store = Store()
   const cart = Cart()
-  import { onMounted } from "vue";
+  import { onMounted, onBeforeMount } from "vue";
 
-  onMounted(async ()=>{
+  onBeforeMount(async ()=>{
     if(store.classes.length == 0){
       await store.getClasses()
     }
+  })
+
+  onMounted(()=>{
     let translate = 0;
 
     let toTranslate
@@ -163,10 +166,10 @@
     <span class="arrow icon-arrow-left"></span>
     <div class="carousel">
       <div class="carousel-inner">
-        <router-link v-for="category in store.classes" :to="{name: 'template', params:{class: category}}" class="carousel-item">
+        <router-link v-for="(category,index) in store.classes" :to="{name: 'template', params:{class: category}}" class="carousel-item">
           <div class="carousel-item">
             <div class="carousel-item-container">
-              <img src="@/assets/width_500.webp" alt="Carousel-item">
+              <img :src="store.classesImages[index]" alt="Carousel-item">
               <h1 style="text-align: center;">{{category}}</h1>
             </div>
           </div>
@@ -177,7 +180,7 @@
   </div>
   <div class="instructions-container">
     <div class="row">
-      <h3>Cómo realizar un pedido personalizado?</h3>
+      <h3>¿Cómo realizar un pedido personalizado?</h3>
       <hr>
     </div>
     <div class="instructions">

@@ -17,9 +17,10 @@
     showModal.value = true;
   }
 
-  import { onMounted, onBeforeMount } from "vue";
+  import { onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 
   onBeforeMount(async ()=>{
+    store.getImagesProduct($route.params.product)
     if($route.query.productInfo == null ||$route.query.productInfo == undefined){
       const data = await store.getInfo($route.params.product)
       store.isLoading = false
@@ -33,6 +34,10 @@
   onMounted(async ()=>{
     cart.toAdd = 1
   })
+
+  onBeforeUnmount(()=>{
+    store.imagesProduct = []
+  })
 </script>
 
 <template>
@@ -45,14 +50,10 @@
     <div class="product-container">
       <div class="left">
         <div class="main-image">
-          <img @click="showLargeImage('https://zeromotorcycles.com/_next/image?url=https%3A%2F%2Fimages.prismic.io%2Fzero-cms-disco%2F9ddb733e-225b-4bf7-bf41-72d36c6f4272_S_MY24.2.jpg%3Fauto%3Dcompress%2Cformat&w=3840&q=75')" src="https://zeromotorcycles.com/_next/image?url=https%3A%2F%2Fimages.prismic.io%2Fzero-cms-disco%2F9ddb733e-225b-4bf7-bf41-72d36c6f4272_S_MY24.2.jpg%3Fauto%3Dcompress%2Cformat&w=3840&q=75" alt="product image">
+          <img @click="showLargeImage(store.imagesProduct[0])" :src="store.imagesProduct[0]" alt="product image">
         </div>
         <div class="small-images">
-          <img @click="showLargeImage('https://picsum.photos/200/300')" src="https://picsum.photos/200/300" alt="product image">
-  
-          <img @click="showLargeImage('https://picsum.photos/200/300')" src="https://picsum.photos/200/300" alt="product image">
-  
-          <img @click="showLargeImage('https://picsum.photos/200/300')" src="https://picsum.photos/200/300" alt="product image">
+          <img :src="product" alt="product image" v-for="(product,index) in store.imagesProduct" @click="showLargeImage(product)">
         </div>
       </div>
       <div class="right">
@@ -225,6 +226,11 @@
   .modal-content button:hover {
     background-color: #444;
   }
+
+  img{
+    object-fit: contain;
+  }
+
 
   @media screen and (min-width: 601px) {
     .product-container{
