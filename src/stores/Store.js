@@ -52,7 +52,7 @@ export const Store = defineStore('Store', {
       .then(()=>{
         signInWithPopup(auth, provider)
         .then((result) => {
-          if(result.user.email !== 'vedebmo@gmail.com'){
+          if(result.user.email !== 'crochettaccesories@gmail.com'){
             result.user.delete().then(() => {
               alert('No tienes acceso a esta función');
             })

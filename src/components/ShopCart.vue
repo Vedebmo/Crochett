@@ -23,7 +23,7 @@
                     Tu Carrito:
                 </legend>
 
-                <Item v-for="(product, index) in cart.productsCart" :id="index" :name="product[1][1]" :price$="product[1][2]" :priceBs="product[1][3]"></Item>
+                <Item v-for="(product, index) in cart.productsCart" :id="index" :name="product[1][1]" :price$="product[1][2]" :priceBs="product[1][3]" :url="product[1][4]"></Item>
 
                 <div style="margin-top: auto">
                     <p style="text-align: center; font-size: 1.5rem;">

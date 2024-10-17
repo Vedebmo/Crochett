@@ -1,6 +1,6 @@
 <template>
     <div class="item">
-        <img src="https://zeromotorcycles.com/_next/image?url=https%3A%2F%2Fimages.prismic.io%2Fzero-cms-disco%2F9ddb733e-225b-4bf7-bf41-72d36c6f4272_S_MY24.2.jpg%3Fauto%3Dcompress%2Cformat&w=3840&q=75" alt="Prodcuto del carrito">
+        <img :src="url" alt="Prodcuto del carrito">
         <div>
             <h1 style="text-align: center; font-size: 1.6rem">{{ name }} - {{cart.productsCart[id][0]}} {{ `Unidad(es)` }}</h1>
             <p style="text-align: center;">{{ price$ }}$ ó {{ priceBs }}Bs</p>
@@ -20,11 +20,15 @@
 <script>
     export default{
         name: "Item",
-        props: ['name', 'price$', 'priceBs', 'id']
+        props: ['name', 'price$', 'priceBs', 'id', 'url']
     }
 </script>
 
 <style scoped>
+    img{
+        object-fit: contain;
+    }
+
     .item{
         display: flex;
         align-items: center;

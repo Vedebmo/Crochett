@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import router from '../router'
 import emailjs from '@emailjs/browser';
+import { Store } from './Store'
+// const store = Store()
 
 export const Cart = defineStore('Cart', {
   state: () => ({
@@ -10,13 +12,14 @@ export const Cart = defineStore('Cart', {
     productsCart: [],
     total$: 0,
     totalBs: 0,
-    formData: {}
+    formData: {},
+    store: Store()
   }),
 
   actions:{
     ChangeAdd(operation){
         operation == "more" ? this.toAdd += 1 : (
-            this.toAdd > 1 ? this.toAdd -= 1 : this.toAdd
+          this.toAdd > 1 ? this.toAdd -= 1 : this.toAdd
         )
     },
     toogleCart(product){
@@ -41,7 +44,8 @@ export const Cart = defineStore('Cart', {
       let productName = product[3]
       let price$ = product[9]
       let priceBs = product[10]
-      const productToAdd = [productIndex,productName,price$,priceBs]
+      let mainImage = this.store.imagesProduct[0]
+      const productToAdd = [productIndex,productName,price$,priceBs,mainImage]
 
       if(this.productsCart.find(item => item[1][0] == productIndex)){
         if(confirm("Este producto ya fue añadido, ¿Quieres añadirlo igual?")){
