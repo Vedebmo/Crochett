@@ -219,7 +219,7 @@ export const Store = defineStore('Store', {
     },
 
     getProductsImages(){
-      this.productsToShow.forEach((product)=>{
+      this.productsToShow.forEach((product,index)=>{
         let found = false
         const storageRef = ref(storage, `/Productos/${product[2]} - ${product[3]}/`);
         listAll(storageRef)
@@ -232,7 +232,7 @@ export const Store = defineStore('Store', {
               getDownloadURL(item)
               .then((url) => {
                 if(!found){
-                  this.imagesToShow.push(url)
+                  this.imagesToShow[index] = url
                   found = true
                 }
               })
