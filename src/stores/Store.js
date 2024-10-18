@@ -27,7 +27,8 @@ export const Store = defineStore('Store', {
     previewSite: '',
     classesImages: [],
     imagesToShow: [],
-    imagesProduct: []
+    imagesProduct: [],
+    searchedImages: []
   }),
 
   actions:{
@@ -167,7 +168,7 @@ export const Store = defineStore('Store', {
     },
 
     getClassesImages(){
-      this.classes.forEach((category)=>{
+      this.classes.forEach((category,index)=>{
         const storageRef = ref(storage, `/${category}`)
         listAll(storageRef)
         .then((res)=>{
@@ -180,7 +181,7 @@ export const Store = defineStore('Store', {
             if (imageExtensions.some(ext => itemName.endsWith(ext))) {
               getDownloadURL(item)
               .then((url) => {
-                this.classesImages.push(url)
+                this.classesImages[index] = url
               })
             }
 
@@ -291,6 +292,7 @@ export const Store = defineStore('Store', {
           }
         })
         .then(()=>{
+              this.searchedImages = []
               document.querySelector('#input').value = ""
               if(found.length == 0){
                 alert("No se han encontrado resultados")
@@ -312,28 +314,48 @@ export const Store = defineStore('Store', {
                   .then((response)=>{
                     response.json()
                     .then((data)=>{
-                      listItem.innerHTML = `
-                      <img src='https://picsum.photos/200/300'>
-                      <h1>${result.split(' - ')[1]}</h1>
-                      <h3>Precio: ${data[9]}$ ó ${data[10]} Bs</h3>
-                      `
-                      listItem.style = 'margin-bottom: 30px; cursor: pointer'
-                      resultsList.appendChild(listItem)
+                      if(data[11] === undefined){
+                        return
+                      }
+                      const storageRef2 = ref(storage, `/Productos/${data[2]} - ${data[3]}/`);
+                      let imgFound = false
+                      listAll(storageRef2)
+                      .then((res) => {
+                        res.items.forEach((item)=>{
+                          const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+                          const itemName = item.name.toLowerCase();
 
-                      listItem.addEventListener('click', ()=>{
-                        this.closeSearch()
-                        router.push({
-                          path: `/Producto/${result}`,
-                          query: {
-                            productInfo: data
+                          if (imageExtensions.some(ext => itemName.endsWith(ext))) {
+                            getDownloadURL(item)
+                            .then((url) => {
+                              if(!imgFound){
+                                this.searchedImages[data[2]] = url
+                                imgFound = true
+                                listItem.innerHTML = `
+                                <img src='${this.searchedImages[data[2]]}' style="width:100%">
+                                <h1 style="text-align: center">${data[3]}</h1>
+                                <h3 style="text-align: center">Precio: ${data[9]}$ ó ${data[10]} Bs</h3>
+                                `
+                                listItem.style = 'margin-bottom: 30px; cursor: pointer'
+                                resultsList.appendChild(listItem)
+
+                                listItem.addEventListener('click', ()=>{
+                                  this.closeSearch()
+                                  router.push({
+                                    path: `/Producto/${data[2]} - ${data[3]}`,
+                                    query: {
+                                      productInfo: data
+                                    }
+                                  })
+                                })
+                              }
+                            })
                           }
                         })
                       })
                     })
                   })
                 })
-
-
               }
               modal.classList.add('show')
               lastPosition = window.scrollY
