@@ -35,7 +35,7 @@
 
     <div class="product-parent">
         <div class="products" v-if="store.dataLoaded">
-            <router-link class="product-container link" :to="{path: `/Producto/${product}`, query:{productInfo: Object.values(store.productsToShow[index]) }}" v-for="(product,index) in store[$route.params.class]">
+            <router-link class="product-container link" :to="{path: `/Producto/${product}`, query:{productInfo: product[1] == null ? Object.values(store.productsToShow[index]) : undefined }}" v-for="(product,index) in store[$route.params.class]">
                 <div class="product-container">
                     <img :src="store.imagesToShow[index]" alt="Imagén del producto">
                     <br>
