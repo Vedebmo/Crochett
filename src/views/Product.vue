@@ -52,8 +52,8 @@
         <div class="main-image">
           <img @click="showLargeImage(store.imagesProduct[0])" :src="store.imagesProduct[0]" alt="product image">
         </div>
-        <div class="small-images">
-          <img :src="product" alt="product image" v-for="(product,index) in store.imagesProduct" @click="showLargeImage(product)">
+        <div class="small-images" v-if="store.imagesProduct.length > 1">
+          <img :src="product" alt="product image" v-for="(product,index) in store.imagesProduct.slice(1)" @click="showLargeImage(product)">
         </div>
       </div>
       <div class="right">

@@ -469,7 +469,7 @@
     display: grid !important;
   }
 
-  fieldset[data-v-b4e148ca] {
+  fieldset{
     height: 90%;
     width: 90%;
     display: flex;

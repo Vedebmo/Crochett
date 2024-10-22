@@ -332,7 +332,7 @@ export const Store = defineStore('Store', {
                                 this.searchedImages[data[2]] = url
                                 imgFound = true
                                 listItem.innerHTML = `
-                                <img src='${this.searchedImages[data[2]]}' style="width:100%">
+                                <img src='${this.searchedImages[data[2]]}' style="width:100%;max-height:50vh">
                                 <h1 style="text-align: center">${data[3]}</h1>
                                 <h3 style="text-align: center">Precio: ${data[9]}$ ó ${data[10]} Bs</h3>
                                 `

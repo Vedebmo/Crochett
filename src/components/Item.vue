@@ -25,10 +25,6 @@
 </script>
 
 <style scoped>
-    img{
-        object-fit: contain;
-    }
-
     .item{
         display: flex;
         align-items: center;
@@ -46,9 +42,10 @@
     }
 
     img {
+        object-fit: contain;
         width: 100%;
         max-height: 20vh;
-        max-width: 50vw;
+        max-width: 35vw;
     }
 
     .icon-bin{
