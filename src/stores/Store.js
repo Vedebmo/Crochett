@@ -28,7 +28,8 @@ export const Store = defineStore('Store', {
     classesImages: [],
     imagesToShow: [],
     imagesProduct: [],
-    searchedImages: []
+    searchedImages: [],
+    tempData: ''
   }),
 
   actions:{
@@ -373,6 +374,7 @@ export const Store = defineStore('Store', {
     },
 
     async getInfo(id) {
+      this.tempData = '';
       const storageRef = ref(storage, `/Productos/${id}/info.json`);
       const url = await getDownloadURL(storageRef);
       const response = await fetch(url);

@@ -21,14 +21,9 @@
 
   onBeforeMount(async ()=>{
     store.getImagesProduct($route.params.product)
-    if($route.query.productInfo == null ||$route.query.productInfo == undefined){
-      const data = await store.getInfo($route.params.product)
-      store.isLoading = false
-      $route.query.productInfo = data
-    }
-    else{
-      store.isLoading = false
-    }
+    const data = await store.getInfo($route.params.product)
+    store.tempData = data
+    store.isLoading = false
   })
 
   onMounted(async ()=>{
@@ -57,23 +52,23 @@
         </div>
       </div>
       <div class="right">
-        <h1>{{$route.query.productInfo[3]}}</h1>
-        <p>Precio: {{$route.query.productInfo[9]}}$ / {{$route.query.productInfo[10]}} Bs</p>
+        <h1>{{store.tempData[3]}}</h1>
+        <p>Precio: {{store.tempData[9]}}$ / {{store.tempData[10]}} Bs</p>
         <div class="description">
           <p>
             Descripción:
           </p>
           <p style="margin-top: 10px;">
-            {{$route.query.productInfo[5]}}
+            {{store.tempData[5]}}
           </p>
           <br>
           <p class="incluye">
             Incluye:
-            {{$route.query.productInfo[7]}}
+            {{store.tempData[7]}}
           </p>
         </div>
         <div class="row-buttons">
-          <Button @click="cart.toogleCart(['Add',$route.query.productInfo])"></Button>
+          <Button @click="cart.toogleCart(['Add',store.tempData])"></Button>
           <div class="amount">
             <span @click="cart.ChangeAdd('less')">-</span>
             <span>{{cart.toAdd}}</span>

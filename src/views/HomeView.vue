@@ -508,11 +508,15 @@
     .background{
       object-fit:  initial;
       object-position: initial;
+      height: 44vh;
     }
 
     .intro{
-      font-size: 2vh;
+      font-size: 3vh;
       width: 60vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     nav{
@@ -555,6 +559,10 @@
       width: auto;
       height: 3vh;
       margin-bottom: 5vh;
+    }
+
+    .carousel-container, .instructions-container, .footer-container{
+      top: 46vh;
     }
 
     .heart svg{
