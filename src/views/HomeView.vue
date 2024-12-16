@@ -543,7 +543,7 @@
 
     .carousel-item{
       max-width: 20%;
-      width: 0;
+      width: .8vw;
     }
 
     .carousel-item-container{
