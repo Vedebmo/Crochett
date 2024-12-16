@@ -40,6 +40,7 @@ const loadPrevious = () => {
 
 onBeforeMount(async () => {
   store.dataLoaded = false
+  store.productsToShow = []
   await store.getProducts(`${$route.params.class}`)
 })
 
@@ -78,7 +79,8 @@ onBeforeUnmount(() => {
           <br />
           <h4>{{ product.split('- ')[1] }}</h4>
           <p>
-            Precio: {{ store.productsToShow[index][9] }}$ / {{ store.productsToShow[index][10] }} Bs
+            Precio: {{ store.productsToShow[index]?.[9] ?? '...' }}$ /
+            {{ store.productsToShow[index]?.[10] ?? '...' }} Bs
           </p>
         </div>
       </router-link>
@@ -89,7 +91,7 @@ onBeforeUnmount(() => {
         </button>
         <button
           @click="loadMore"
-          v-if="paginatedProducts.length < store[$route.params.class].length"
+          v-if="currentPage * itemsPerPage < store[$route.params.class]?.length"
           class="loadButton"
         >
           Siguientes Productos

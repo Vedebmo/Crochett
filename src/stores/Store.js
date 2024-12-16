@@ -199,15 +199,22 @@ export const Store = defineStore('Store', {
       const url = await getDownloadURL(storageRef)
       const response = await fetch(url)
       let data = await response.text()
-      data = data.split(', ').slice(0, -1) // split and remove the last element
+      data = data.split(', ').slice(0, -1)
       this[category] = data
+
+      // Clear and refetch all product data
+      this.productsToShow = []
 
       for (let index = 0; index < data.length; index++) {
         const productRef = ref(storage, `/Productos/${data[index]}/info.json`)
-        const productUrl = await getDownloadURL(productRef)
-        const productResponse = await fetch(productUrl)
-        const productData = await productResponse.json()
-        this.productsToShow.push(productData)
+        try {
+          const productUrl = await getDownloadURL(productRef)
+          const productResponse = await fetch(productUrl)
+          const productData = await productResponse.json()
+          this.productsToShow.push(productData)
+        } catch (error) {
+          console.error('Error fetching product:', error)
+        }
       }
 
       if (
