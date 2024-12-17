@@ -17,13 +17,22 @@ const currentPage = ref(store.currentPage || 1)
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
   const end = start + itemsPerPage
-  return store[$route.params.class]?.slice(start, end) || []
+  const products = store[$route.params.class] || []
+  return products.slice(start, Math.min(end, products.length))
+})
+
+const paginatedProductInfo = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  const products = store.productsToShow || []
+  return products.slice(start, Math.min(end, products.length))
 })
 
 const paginatedImages = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
   const end = start + itemsPerPage
-  return store.imagesToShow?.slice(start, end) || []
+  const images = store.imagesToShow || []
+  return images.slice(start, Math.min(end, images.length))
 })
 
 const loadMore = () => {
@@ -75,12 +84,12 @@ onBeforeUnmount(() => {
         }"
       >
         <div class="product-container">
-          <img :src="paginatedImages[index]" alt="Imagén del producto" />
+          <img :src="paginatedImages[index]" alt="Imagen del producto" />
           <br />
           <h4>{{ product.split('- ')[1] }}</h4>
           <p>
-            Precio: {{ store.productsToShow[index]?.[9] ?? '...' }}$ /
-            {{ store.productsToShow[index]?.[10] ?? '...' }} Bs
+            Precio: {{ paginatedProductInfo[index]?.[9] ?? '...' }}$ /
+            {{ paginatedProductInfo[index]?.[10] ?? '...' }} Bs
           </p>
         </div>
       </router-link>

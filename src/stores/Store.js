@@ -199,14 +199,21 @@ export const Store = defineStore('Store', {
       const url = await getDownloadURL(storageRef)
       const response = await fetch(url)
       let data = await response.text()
-      data = data.split(', ').slice(0, -1)
+
+      // Split by comma and clean each item
+      data = data
+        .trim()
+        .split(',')
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0) // Remove empty entries
+
       this[category] = data
 
       // Clear and refetch all product data
       this.productsToShow = []
 
       for (let index = 0; index < data.length; index++) {
-        const productRef = ref(storage, `/Productos/${data[index]}/info.json`)
+        const productRef = ref(storage, `/Productos/${data[index].replace(/,+$/, '')}/info.json`)
         try {
           const productUrl = await getDownloadURL(productRef)
           const productResponse = await fetch(productUrl)
