@@ -9,10 +9,21 @@ import { Cart } from '@/Stores/Cart.js'
 const cart = Cart()
 let previewSite = $route.fullPath
 
-import { onBeforeMount, onBeforeUnmount, ref, computed } from 'vue'
+import { onBeforeMount, onBeforeUnmount, ref, computed, watch } from 'vue'
 
 const itemsPerPage = 8
-const currentPage = ref(store.currentPage || 1)
+const currentPage = ref(1)
+
+watch(
+  () => $route.params.class,
+  (newClass, oldClass) => {
+    if (newClass !== oldClass) {
+      currentPage.value = 1
+      store.currentPage = 1
+      store.lastCategory = newClass
+    }
+  }
+)
 
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
@@ -48,9 +59,18 @@ const loadPrevious = () => {
 }
 
 onBeforeMount(async () => {
+  if (store.lastCategory !== $route.params.class) {
+    currentPage.value = 1
+    store.currentPage = 1
+  } else {
+    currentPage.value = store.currentPage || 1
+  }
+
+  store.lastCategory = $route.params.class
   store.dataLoaded = false
   store.productsToShow = []
-  await store.getProducts(`${$route.params.class}`)
+  store.imagesToShow = []
+  await store.getProducts($route.params.class)
 })
 
 onBeforeUnmount(() => {

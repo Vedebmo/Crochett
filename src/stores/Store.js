@@ -36,7 +36,8 @@ export const Store = defineStore('Store', {
     imagesToShow: [],
     imagesProduct: [],
     searchedImages: [],
-    tempData: ''
+    tempData: '',
+    lastCategory: null
   }),
 
   actions: {
@@ -198,44 +199,54 @@ export const Store = defineStore('Store', {
     async getProducts(category) {
       this.productsToShow = []
       this[category] = []
+      this.imagesToShow = []
       this.actualSite = router.currentRoute.value.fullPath
-      const storageRef = ref(storage, `${category}/${category}.txt`)
-      const url = await getDownloadURL(storageRef)
-      const response = await fetch(url)
-      let data = await response.text()
 
-      // Split by comma and clean each item
-      data = data
-        .trim()
-        .split(',')
-        .map((item) => item.trim())
-        .filter((item) => item.length > 0) // Remove empty entries
+      try {
+        // Get category data
+        const storageRef = ref(storage, `${category}/${category}.txt`)
+        const url = await getDownloadURL(storageRef)
+        const response = await fetch(url)
+        let data = await response.text()
 
-      this[category] = data
+        // Clean and process data
+        data = data
+          .trim()
+          .split(',')
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0)
 
-      // Clear and refetch all product data
-      this.productsToShow = []
+        this[category] = data
 
-      for (let index = 0; index < data.length; index++) {
-        const productRef = ref(storage, `/Productos/${data[index].replace(/,+$/, '')}/info.json`)
-        try {
-          const productUrl = await getDownloadURL(productRef)
-          const productResponse = await fetch(productUrl)
-          const productData = await productResponse.json()
-          this.productsToShow.push(productData)
-        } catch (error) {
-          console.error('Error fetching product:', error)
+        // Use Promise.all to fetch all products in parallel
+        const productPromises = data.map(async (productName) => {
+          const productRef = ref(storage, `/Productos/${productName.replace(/,+$/, '')}/info.json`)
+          try {
+            const productUrl = await getDownloadURL(productRef)
+            const productResponse = await fetch(productUrl)
+            return await productResponse.json()
+          } catch (error) {
+            console.error('Error fetching product:', error)
+            return null
+          }
+        })
+
+        this.productsToShow = (await Promise.all(productPromises)).filter(
+          (product) => product !== null
+        )
+
+        if (
+          (this.previewSite == this.actualSite || this.previewSite == '') &&
+          this.actualSite !== ''
+        ) {
+          this.getProductsImages()
+        } else {
+          this.previewSite = ''
+          this.productsToShow = []
         }
-      }
-
-      if (
-        (this.previewSite == this.actualSite || this.previewSite == '') &&
-        this.actualSite !== ''
-      ) {
-        this.getProductsImages()
-      } else {
-        this.previewSite = ''
-        this.productsToShow = []
+      } catch (error) {
+        console.error('Error in getProducts:', error)
+        this.dataLoaded = true
       }
     },
 
