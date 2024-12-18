@@ -157,7 +157,7 @@
       </div>
 
       <div class="button-group">
-        <button type="submit" class="submit-button">Subir Producto</button>
+        <button type="submit" class="submit-button">Subir Producto(s)</button>
         <button type="button" @click="clearForm" class="clear-button">Limpiar</button>
       </div>
     </form>
@@ -283,6 +283,22 @@
             <div class="price-input-container">
               <span class="currency-symbol">Bs</span>
               <input v-model="editingItem.price_bs" type="number" step="0.01" required />
+            </div>
+          </div>
+
+          <!-- Add categories selection -->
+          <div class="form-group">
+            <label>Categorías:</label>
+            <div class="categories-container">
+              <div v-for="category in categories" :key="category" class="category-checkbox">
+                <input
+                  type="checkbox"
+                  :id="`edit-${category}`"
+                  :value="category"
+                  v-model="editingItem.categories"
+                />
+                <label :for="`edit-${category}`">{{ category }}</label>
+              </div>
             </div>
           </div>
         </div>
@@ -436,6 +452,7 @@ const updatePrices = (currency, productIndex) => {
 
 // Upload product
 const uploadProduct = async () => {
+  alert('Subiendo productos...')
   if (!isAuthenticated.value) {
     alert('Por favor, inicia sesión primero')
     return
@@ -574,7 +591,7 @@ const loadAllProducts = async (searchTerm) => {
           .replace(/[eéèëê]/g, '[eéèëê]')
           .replace(/[iíìïî]/g, '[iíìïî]')
           .replace(/[oóòöô]/g, '[oóòöô]')
-          .replace(/[uúùüû]/g, '[uúùü��]')
+          .replace(/[uúùüû]/g, '[uúùü]')
       })
       .map((word) => new RegExp(word, 'i'))
 
@@ -766,6 +783,14 @@ watch(activeTab, async (newTab) => {
 
 // Modified editProduct function to ensure categories is always an array
 const editProduct = (product) => {
+  // Extract categories from product data (indices 11 and beyond)
+  const productCategories = []
+  for (let i = 11; i < product.length; i++) {
+    if (product[i]) {
+      productCategories.push(product[i])
+    }
+  }
+
   editingItem.value = {
     id: product.id,
     name: product[3],
@@ -773,7 +798,9 @@ const editProduct = (product) => {
     includes: product[7],
     price_usd: product[9],
     price_bs: product[10],
-    originalName: product[3]
+    categories: productCategories,
+    originalName: product[3],
+    originalCategories: [...productCategories] // Keep track of original categories
   }
   showEditModal.value = true
 }
@@ -784,52 +811,9 @@ const saveEdit = async () => {
     const product = editingItem.value
     const oldFolderName = `${product.id} - ${product.originalName}`
     const newFolderName = `${product.id} - ${product.name}`
+    const isNameChanged = product.originalName !== product.name
 
-    if (product.name !== product.originalName) {
-      // 1. Create new folder and copy all files
-      const oldFolderRef = storageRef(storage, `/Productos/${oldFolderName}`)
-      const oldFiles = await listAll(oldFolderRef)
-
-      // Copy all files to new location
-      for (const file of oldFiles.items) {
-        const fileData = await getDownloadURL(file)
-        const response = await fetch(fileData)
-        const blob = await response.blob()
-
-        const newFileRef = storageRef(storage, `/Productos/${newFolderName}/${file.name}`)
-        await uploadBytes(newFileRef, blob)
-      }
-
-      // Update categories
-      for (const category of categories.value) {
-        const categoryRef = storageRef(storage, `/${category}/${category}.txt`)
-        try {
-          const url = await getDownloadURL(categoryRef)
-          const response = await fetch(url)
-          let data = await response.text()
-
-          // Replace old product entry with new one, maintaining format
-          const oldEntry = `${product.id} - ${product.originalName},`
-          const newEntry = `${product.id} - ${product.name},`
-
-          if (data.includes(oldEntry)) {
-            data = data.replace(oldEntry, newEntry)
-            // Ensure proper formatting
-            data = ` ${data.trim()}`
-            await uploadBytes(categoryRef, new TextEncoder().encode(data))
-          }
-        } catch (error) {
-          console.error('Error updating category:', error)
-        }
-      }
-
-      // 3. Delete old folder after successful transfer
-      for (const file of oldFiles.items) {
-        await deleteObject(file)
-      }
-    }
-
-    // 4. Create updated product info
+    // Prepare the new product info
     const productInfo = []
     productInfo[0] = product.id
     productInfo[1] = null
@@ -842,19 +826,117 @@ const saveEdit = async () => {
     productInfo[8] = ''
     productInfo[9] = Number(product.price_usd)
     productInfo[10] = Number(product.price_bs)
+    // Add categories
+    product.categories.forEach((category) => {
+      productInfo.push(category)
+    })
 
-    // Keep existing categories
-    const originalProduct = allProducts.value.find((p) => p.id === product.id)
-    if (originalProduct) {
-      Object.entries(originalProduct)
-        .filter(([key]) => isNaN(key) && key !== 'id' && key !== 'image')
-        .forEach(([_, value]) => {
-          productInfo.push(value)
-        })
+    // Handle category changes
+    const categoriesToRemove = product.originalCategories.filter(
+      (cat) => !product.categories.includes(cat)
+    )
+    const categoriesToAdd = product.categories.filter(
+      (cat) => !product.originalCategories.includes(cat)
+    )
+
+    // Update category files
+    const updatePromises = []
+
+    // Remove from old categories
+    for (const category of categoriesToRemove) {
+      const promise = (async () => {
+        const categoryRef = storageRef(storage, `/${category}/${category}.txt`)
+        try {
+          const url = await getDownloadURL(categoryRef)
+          const response = await fetch(url)
+          let data = await response.text()
+          const productEntry = `${product.id} - ${product.originalName},`
+          data = data.replace(productEntry, '')
+          data = data.trim()
+          if (data) {
+            data = ` ${data}`
+          }
+          await uploadBytes(categoryRef, new TextEncoder().encode(data))
+        } catch (error) {
+          console.error(`Error updating category ${category}:`, error)
+        }
+      })()
+      updatePromises.push(promise)
     }
 
-    // 5. Update product info file in the correct location
-    const infoRef = storageRef(storage, `/Productos/${product.id} - ${product.name}/info.json`)
+    // Add to new categories
+    for (const category of categoriesToAdd) {
+      const promise = (async () => {
+        const categoryRef = storageRef(storage, `/${category}/${category}.txt`)
+        try {
+          const url = await getDownloadURL(categoryRef)
+          const response = await fetch(url)
+          let data = await response.text()
+          const productEntry = `${product.id} - ${product.name},`
+          data = data.trim()
+          data = data ? `${data} ${productEntry}` : ` ${productEntry}`
+          await uploadBytes(categoryRef, new TextEncoder().encode(data))
+        } catch (error) {
+          console.error(`Error updating category ${category}:`, error)
+        }
+      })()
+      updatePromises.push(promise)
+    }
+
+    // Update existing categories if name changed
+    if (isNameChanged) {
+      const unchangedCategories = product.categories.filter((cat) =>
+        product.originalCategories.includes(cat)
+      )
+      for (const category of unchangedCategories) {
+        const promise = (async () => {
+          const categoryRef = storageRef(storage, `/${category}/${category}.txt`)
+          try {
+            const url = await getDownloadURL(categoryRef)
+            const response = await fetch(url)
+            let data = await response.text()
+            const oldEntry = `${product.id} - ${product.originalName},`
+            const newEntry = `${product.id} - ${product.name},`
+            data = data.replace(oldEntry, newEntry)
+            await uploadBytes(categoryRef, new TextEncoder().encode(data))
+          } catch (error) {
+            console.error(`Error updating category ${category}:`, error)
+          }
+        })()
+        updatePromises.push(promise)
+      }
+    }
+
+    // Wait for all category updates to complete
+    await Promise.all(updatePromises)
+
+    // Update product info file
+    if (isNameChanged) {
+      // Create new folder and copy files
+      const oldFolderRef = storageRef(storage, `/Productos/${oldFolderName}`)
+      const oldFiles = await listAll(oldFolderRef)
+
+      // Copy all files to new location
+      for (const file of oldFiles.items) {
+        if (file.name === 'info.json') continue // Skip info.json as we'll create a new one
+        const fileData = await getDownloadURL(file)
+        const response = await fetch(fileData)
+        const blob = await response.blob()
+        const newFileRef = storageRef(storage, `/Productos/${newFolderName}/${file.name}`)
+        await uploadBytes(newFileRef, blob)
+      }
+
+      // Delete old folder after successful transfer
+      for (const file of oldFiles.items) {
+        await deleteObject(file)
+      }
+    }
+
+    // Save new info.json
+    const infoRef = storageRef(
+      storage,
+      `/Productos/${isNameChanged ? newFolderName : oldFolderName}/info.json`
+    )
     await uploadBytes(infoRef, new TextEncoder().encode(JSON.stringify(productInfo)))
 
     // After successful edit, refresh the search data
@@ -863,12 +945,10 @@ const saveEdit = async () => {
     alert('Producto actualizado exitosamente')
     showEditModal.value = false
 
-    // Reset search state completely
+    // Reset search and refresh product list
     searchQuery.value = ''
     filteredProducts.value = []
-    processedIds = [] // Reset the processed IDs array
-
-    // Optional: If you want to immediately search for the updated product
+    processedIds = []
     searchQuery.value = product.name
     await searchProducts()
   } catch (error) {
@@ -1046,7 +1126,7 @@ const startEditCategory = async (category) => {
 
 const updateCategory = async () => {
   if (!editingCategory.value || !editingCategory.value.newName.trim()) return
-
+  alert('Actualizando categoría...')
   try {
     const oldName = editingCategory.value.oldName
     const newName = editingCategory.value.newName.trim()
@@ -1057,106 +1137,94 @@ const updateCategory = async () => {
       const imageRef = storageRef(storage, `/${oldName}/image.${fileExtension}`)
       await uploadBytes(imageRef, categoryImageFile.value)
       alert('Imagen de categoría actualizada exitosamente')
+      return // Exit early for image-only updates
     }
+
     // If changing name (with or without new image)
-    else if (oldName !== newName) {
-      // 1. Get old category content
+    if (oldName !== newName) {
+      // Prepare all promises for concurrent execution
+      const promises = []
+
+      // 1. Get old category content and prepare new category
       const oldCategoryRef = storageRef(storage, `/${oldName}/${oldName}.txt`)
-      let content = ''
-      try {
-        const url = await getDownloadURL(oldCategoryRef)
-        const response = await fetch(url)
-        content = await response.text()
-      } catch (error) {
-        console.log('No existing content found')
-      }
+      const contentPromise = getDownloadURL(oldCategoryRef)
+        .then((url) => fetch(url))
+        .then((response) => response.text())
+        .catch(() => '') // Default to empty string if no content
+        .then((content) => {
+          const newCategoryRef = storageRef(storage, `/${newName}/${newName}.txt`)
+          return uploadBytes(newCategoryRef, new TextEncoder().encode(content))
+        })
+      promises.push(contentPromise)
 
-      // 2. Create new category with old content
-      const newCategoryRef = storageRef(storage, `/${newName}/${newName}.txt`)
-      await uploadBytes(newCategoryRef, new TextEncoder().encode(content))
-
-      // 3. Copy or upload image
+      // 2. Handle image transfer/upload
       if (categoryImageFile.value) {
-        // Upload new image
         const fileExtension = categoryImageFile.value.name.split('.').pop()
         const newImageRef = storageRef(storage, `/${newName}/image.${fileExtension}`)
-        await uploadBytes(newImageRef, categoryImageFile.value)
+        promises.push(uploadBytes(newImageRef, categoryImageFile.value))
       } else {
-        // Try to copy existing image
-        try {
-          const oldImageRef = storageRef(storage, `/${oldName}`)
-          const oldFiles = await listAll(oldImageRef)
-          const imageFile = oldFiles.items.find((item) =>
-            item.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i)
-          )
-
-          if (imageFile) {
-            const imageUrl = await getDownloadURL(imageFile)
-            const response = await fetch(imageUrl)
-            const imageBlob = await response.blob()
-            const fileExtension = imageFile.name.split('.').pop()
-            const newImageRef = storageRef(storage, `/${newName}/image.${fileExtension}`)
-            await uploadBytes(newImageRef, imageBlob)
-          }
-        } catch (error) {
-          console.log('No existing image to copy')
-        }
-      }
-      // 4. Update all product references in Firebase
-      const productsRef = storageRef(storage, '/Productos')
-      const products = await listAll(productsRef)
-
-      for (const productFolder of products.prefixes) {
-        try {
-          const infoRef = storageRef(storage, `/Productos/${productFolder.name}/info.json`)
-          const productUrl = await getDownloadURL(infoRef)
-          const productResponse = await fetch(productUrl)
-          const productData = await productResponse.json()
-
-          // Update category in product data if needed
-          let updated = false
-          for (let i = 11; i < productData.length; i++) {
-            if (productData[i] === oldName) {
-              productData[i] = newName
-              updated = true
-            }
-          }
-
-          if (updated) {
-            await uploadBytes(infoRef, new TextEncoder().encode(JSON.stringify(productData)))
-          }
-        } catch (error) {
-          console.error('Error updating product:', error)
-        }
-      }
-      // 5. Delete old category folder and all its contents
-      try {
-        const oldFolder = storageRef(storage, `/${oldName}`)
-        const oldFiles = await listAll(oldFolder)
-        // Delete all files first
-        await Promise.all(
-          oldFiles.items.map(async (file) => {
-            try {
-              await deleteObject(file)
-              console.log(`Deleted file: ${file.name}`)
-            } catch (error) {
-              console.error(`Error deleting file ${file.name}:`, error)
+        const imagePromise = listAll(storageRef(storage, `/${oldName}`))
+          .then((res) => {
+            const imageFile = res.items.find((item) =>
+              item.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i)
+            )
+            if (imageFile) {
+              return getDownloadURL(imageFile)
+                .then((url) => fetch(url))
+                .then((response) => response.blob())
+                .then((imageBlob) => {
+                  const fileExtension = imageFile.name.split('.').pop()
+                  const newImageRef = storageRef(storage, `/${newName}/image.${fileExtension}`)
+                  return uploadBytes(newImageRef, imageBlob)
+                })
             }
           })
-        )
-
-        // Verify deletion and show feedback
-        console.log(`Old category "${oldName}" deleted successfully`)
-        alert(`Categoría "${oldName}" actualizada a "${newName}" exitosamente`)
-      } catch (error) {
-        console.error('Error deleting old category folder:', error)
-        throw error // Re-throw to trigger catch block
+          .catch((error) => console.log('No existing image to copy:', error))
+        promises.push(imagePromise)
       }
+
+      // 3. Update product references
+      const updateRefsPromise = listAll(storageRef(storage, '/Productos')).then(async (res) => {
+        const updatePromises = res.prefixes.map(async (folder) => {
+          const infoRef = storageRef(storage, `/Productos/${folder.name}/info.json`)
+          try {
+            const url = await getDownloadURL(infoRef)
+            const response = await fetch(url)
+            const data = await response.json()
+
+            let updated = false
+            for (let i = 11; i < data.length; i++) {
+              if (data[i] === oldName) {
+                data[i] = newName
+                updated = true
+              }
+            }
+
+            if (updated) {
+              return uploadBytes(infoRef, new TextEncoder().encode(JSON.stringify(data)))
+            }
+          } catch (error) {
+            console.error(`Error updating product ${folder.name}:`, error)
+          }
+        })
+        return Promise.all(updatePromises.filter(Boolean))
+      })
+      promises.push(updateRefsPromise)
+
+      // Execute all operations concurrently
+      await Promise.all(promises)
+
+      // 4. Delete old category folder after successful transfer
+      const oldFolder = storageRef(storage, `/${oldName}`)
+      const oldFiles = await listAll(oldFolder)
+      await Promise.all(oldFiles.items.map((file) => deleteObject(file)))
+
+      alert(`Categoría "${oldName}" actualizada a "${newName}" exitosamente`)
     }
 
-    // 6. Refresh everything
-    categories.value = [] // Clear current categories
-    await store.getClasses() // This will refresh both categories and images
+    // 5. Refresh UI
+    categories.value = []
+    await store.getClasses()
     categories.value = store.classes
     editingCategory.value = null
     categoryImageFile.value = null
@@ -1693,5 +1761,27 @@ textarea {
 .category-actions {
   display: flex;
   gap: 0.5rem;
+}
+
+.categories-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.category-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.category-checkbox input[type='checkbox'] {
+  margin: 0;
+}
+
+.category-checkbox label {
+  margin: 0;
+  cursor: pointer;
 }
 </style>
