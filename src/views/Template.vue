@@ -84,9 +84,18 @@ onBeforeUnmount(() => {
         }"
       >
         <div class="product-container">
-          <img :src="paginatedImages[index]" alt="Imagen del producto" />
-          <br />
-          <h4>{{ product.split('- ')[1] }}</h4>
+          <div class="image-container">
+            <img :src="paginatedImages[index]" alt="Imagen del producto" />
+            <h1 v-if="paginatedProductInfo[index]?.[8] === 'agotado'" class="agotado-title">
+              PRODUCTO AGOTADO
+            </h1>
+          </div>
+          <h4>
+            {{ product.split('- ')[1] }}
+            <span v-if="paginatedProductInfo[index]?.[8] === 'agotado'" class="agotado-text">
+              - AGOTADO
+            </span>
+          </h4>
           <p>
             Precio: {{ paginatedProductInfo[index]?.[9] ?? '...' }}$ /
             {{ paginatedProductInfo[index]?.[10] ?? '...' }} Bs
@@ -145,7 +154,6 @@ onBeforeUnmount(() => {
 }
 
 .product-container img {
-  height: 70%;
   width: 100%;
 }
 
@@ -218,5 +226,31 @@ img {
   .pagination-buttons {
     margin: 20px 0px;
   }
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.agotado-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  text-align: center;
+  font-weight: bold;
+  color: red;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  width: 100%;
+  margin: 0;
+}
+
+.agotado-text {
+  color: red;
+  font-weight: bold;
 }
 </style>

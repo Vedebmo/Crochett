@@ -154,6 +154,11 @@
             </div>
           </div>
         </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" :id="`outOfStock-${index}`" v-model="product.outOfStock" />
+          <label :for="`outOfStock-${index}`">Agotado</label>
+        </div>
       </div>
 
       <div class="button-group">
@@ -301,6 +306,13 @@
               </div>
             </div>
           </div>
+
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="editOutOfStock" v-model="editingItem.outOfStock" />
+              <label for="editOutOfStock">Agotado</label>
+            </div>
+          </div>
         </div>
 
         <div class="modal-buttons">
@@ -313,7 +325,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, watch, computed, onMounted } from 'vue'
+import { ref, onBeforeMount, watch, computed, onMounted, nextTick } from 'vue'
 import { Store } from '@/stores/Store.js'
 import {
   getStorage,
@@ -342,7 +354,8 @@ const newProduct = ref({
   price_usd: '',
   price_bs: '',
   categories: [],
-  images: []
+  images: [],
+  outOfStock: false
 })
 
 const exchangeRate = ref('')
@@ -494,7 +507,7 @@ const uploadProduct = async () => {
       productInfo[5] = product.description
       productInfo[6] = ''
       productInfo[7] = product.includes
-      productInfo[8] = ''
+      productInfo[8] = product.outOfStock ? 'agotado' : ''
       productInfo[9] = Number(product.price_usd)
       productInfo[10] = Number(product.price_bs)
       product.categories.forEach((category) => {
@@ -545,7 +558,8 @@ const clearForm = () => {
       price_usd: '',
       price_bs: '',
       categories: [],
-      images: []
+      images: [],
+      outOfStock: false
     }
   ]
   productCount.value = 1
@@ -785,24 +799,29 @@ watch(activeTab, async (newTab) => {
 const editProduct = (product) => {
   // Extract categories from product data (indices 11 and beyond)
   const productCategories = []
-  for (let i = 11; i < product.length; i++) {
+  for (let i = 11; i < Object.keys(product).length; i++) {
     if (product[i]) {
       productCategories.push(product[i])
     }
   }
 
   editingItem.value = {
-    id: product.id,
+    id: product[2], // Make sure we're using the correct index for ID
     name: product[3],
     description: product[5],
     includes: product[7],
+    outOfStock: product[8] === 'agotado',
     price_usd: product[9],
     price_bs: product[10],
-    categories: productCategories,
+    categories: productCategories, // This will be bound to the checkboxes
     originalName: product[3],
     originalCategories: [...productCategories] // Keep track of original categories
   }
-  showEditModal.value = true
+
+  // Force a reactivity update
+  nextTick(() => {
+    showEditModal.value = true
+  })
 }
 
 // Update the saveEdit function
@@ -823,7 +842,7 @@ const saveEdit = async () => {
     productInfo[5] = product.description
     productInfo[6] = ''
     productInfo[7] = product.includes
-    productInfo[8] = ''
+    productInfo[8] = product.outOfStock ? 'agotado' : ''
     productInfo[9] = Number(product.price_usd)
     productInfo[10] = Number(product.price_bs)
     // Add categories
@@ -1088,7 +1107,8 @@ const initializeMultipleProducts = () => {
       price_usd: '',
       price_bs: '',
       categories: [],
-      images: []
+      images: [],
+      outOfStock: false
     }))
 
   useAutoConversion.value = Array(count).fill(true)
@@ -1781,6 +1801,22 @@ textarea {
 }
 
 .category-checkbox label {
+  margin: 0;
+  cursor: pointer;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.checkbox-group input[type='checkbox'] {
+  width: auto;
+}
+
+.checkbox-group label {
   margin: 0;
   cursor: pointer;
 }
