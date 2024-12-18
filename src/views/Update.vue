@@ -480,6 +480,15 @@ const uploadProduct = async () => {
 
   try {
     for (const [index, product] of products.value.entries()) {
+      // Trim the product name
+      product.name = product.name.trim()
+
+      // Validate that required fields are not empty after trimming
+      if (!product.name || !product.description || !product.includes || !product.price_usd) {
+        alert('Por favor complete todos los campos requeridos')
+        return
+      }
+
       const productId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       product.id = productId
 
@@ -796,41 +805,71 @@ watch(activeTab, async (newTab) => {
 })
 
 // Modified editProduct function to ensure categories is always an array
-const editProduct = (product) => {
-  // Extract categories from product data (indices 11 and beyond)
-  const productCategories = []
-  for (let i = 11; i < Object.keys(product).length; i++) {
-    if (product[i]) {
-      productCategories.push(product[i])
+const editProduct = async (product) => {
+  try {
+    const productId = Array.isArray(product) ? product[2] : product.id
+    // Ensure name is trimmed when loading for edit
+    const productName = (Array.isArray(product) ? product[3] : product[3]).trim()
+    const productCategories = []
+
+    // Create promises for all category checks at once
+    const categoryChecks = categories.value.map((category) => {
+      return getDownloadURL(storageRef(storage, `/${category}/${category}.txt`))
+        .then((url) => fetch(url))
+        .then((response) => response.text())
+        .then((data) => {
+          const productEntry = `${productId} - ${productName},`
+          if (data.includes(productEntry)) {
+            productCategories.push(category)
+          }
+        })
+        .catch((error) => {
+          console.error(`Error checking category ${category}:`, error)
+        })
+    })
+
+    await Promise.all(categoryChecks)
+
+    editingItem.value = {
+      id: Array.isArray(product) ? product[2] : product.id,
+      name: productName, // Using trimmed name
+      description: (Array.isArray(product) ? product[5] : product[5]).trim(),
+      includes: (Array.isArray(product) ? product[7] : product[7]).trim(),
+      outOfStock: Array.isArray(product) ? product[8] === 'agotado' : product[8] === 'agotado',
+      price_usd: Array.isArray(product) ? product[9] : product[9],
+      price_bs: Array.isArray(product) ? product[10] : product[10],
+      categories: productCategories,
+      originalName: productName, // Using trimmed name for original name
+      originalCategories: [...productCategories]
     }
-  }
 
-  editingItem.value = {
-    id: product[2], // Make sure we're using the correct index for ID
-    name: product[3],
-    description: product[5],
-    includes: product[7],
-    outOfStock: product[8] === 'agotado',
-    price_usd: product[9],
-    price_bs: product[10],
-    categories: productCategories, // This will be bound to the checkboxes
-    originalName: product[3],
-    originalCategories: [...productCategories] // Keep track of original categories
+    nextTick(() => {
+      showEditModal.value = true
+    })
+  } catch (error) {
+    console.error('Error loading product categories:', error)
+    alert('Error al cargar las categorías del producto')
   }
-
-  // Force a reactivity update
-  nextTick(() => {
-    showEditModal.value = true
-  })
 }
 
 // Update the saveEdit function
 const saveEdit = async () => {
   try {
     const product = editingItem.value
-    const oldFolderName = `${product.id} - ${product.originalName}`
+    // Ensure name is trimmed when saving
+    product.name = product.name.trim()
+    product.description = product.description.trim()
+    product.includes = product.includes.trim()
+
+    // Validate that required fields are not empty after trimming
+    if (!product.name || !product.description || !product.includes || !product.price_usd) {
+      alert('Por favor complete todos los campos requeridos')
+      return
+    }
+
+    const oldFolderName = `${product.id} - ${product.originalName.trim()}`
     const newFolderName = `${product.id} - ${product.name}`
-    const isNameChanged = product.originalName !== product.name
+    const isNameChanged = product.originalName.trim() !== product.name
 
     // Prepare the new product info
     const productInfo = []
@@ -1120,8 +1159,8 @@ const initializeMultipleProducts = () => {
 
 const startEditCategory = async (category) => {
   editingCategory.value = {
-    oldName: category,
-    newName: category,
+    oldName: category.trim(),
+    newName: category.trim(),
     image: null
   }
 
@@ -1148,7 +1187,7 @@ const updateCategory = async () => {
   if (!editingCategory.value || !editingCategory.value.newName.trim()) return
   alert('Actualizando categoría...')
   try {
-    const oldName = editingCategory.value.oldName
+    const oldName = editingCategory.value.oldName.trim()
     const newName = editingCategory.value.newName.trim()
 
     // If only changing the image (same name)
