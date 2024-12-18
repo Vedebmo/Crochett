@@ -28,118 +28,132 @@
       @submit.prevent="uploadProduct"
       class="product-form"
     >
-      <div class="form-group">
-        <label for="name">Nombre del Producto:</label>
-        <input
-          id="name"
-          v-model="newProduct.name"
-          required
-          type="text"
-          placeholder="Ej: Bolso tejido"
-        />
-      </div>
+      <button @click="initializeMultipleProducts" class="add-multiple-button">
+        Agregar Múltiples Productos
+      </button>
 
-      <div class="form-group">
-        <label for="description">Descripción:</label>
-        <textarea
-          id="description"
-          v-model="newProduct.description"
-          required
-          placeholder="Describe el producto..."
-        ></textarea>
-      </div>
+      <div v-for="(product, index) in products" :key="index" class="product-form">
+        <h3>Producto {{ index + 1 }} de {{ productCount }}</h3>
 
-      <div class="form-group">
-        <label for="includes">Incluye:</label>
-        <textarea
-          id="includes"
-          v-model="newProduct.includes"
-          required
-          placeholder="¿Qué incluye el producto?"
-        ></textarea>
-      </div>
-
-      <div class="form-group conversion-toggle">
-        <label class="toggle-label">
-          <input type="checkbox" v-model="useAutoConversion" />
-          <span class="toggle-text">Usar conversión automática</span>
-        </label>
-      </div>
-
-      <div class="form-group" v-if="useAutoConversion">
-        <label for="exchange_rate">Tasa de Cambio (1 USD = X Bs):</label>
-        <div class="price-input-container">
-          <span class="currency-symbol">Bs</span>
+        <div class="form-group">
+          <label for="name">Nombre del Producto:</label>
           <input
-            id="exchange_rate"
-            v-model="exchangeRate"
-            type="number"
-            step="0.01"
-            placeholder="56"
-          />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="price_usd">Precio (USD):</label>
-        <div class="price-input-container">
-          <span class="currency-symbol">$</span>
-          <input
-            id="price_usd"
-            v-model="newProduct.price_usd"
+            id="name"
+            v-model="product.name"
             required
-            type="number"
-            step="0.01"
-            placeholder="10"
-            @input="updatePrices('usd')"
+            type="text"
+            placeholder="Ej: Bolso tejido"
           />
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="price_bs">Precio (Bs):</label>
-        <div class="price-input-container">
-          <span class="currency-symbol">Bs</span>
-          <input
-            id="price_bs"
-            v-model="newProduct.price_bs"
+        <div class="form-group">
+          <label for="description">Descripción:</label>
+          <textarea
+            id="description"
+            v-model="product.description"
             required
-            type="number"
-            step="0.01"
-            placeholder="560"
-            @input="updatePrices('bs')"
-          />
+            placeholder="Describe el producto..."
+          ></textarea>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label>Categorías (selecciona una o más):</label>
-        <div class="categories-container">
-          <div v-for="category in categories" :key="category" class="category-checkbox">
+        <div class="form-group">
+          <label for="includes">Incluye:</label>
+          <textarea
+            id="includes"
+            v-model="product.includes"
+            required
+            placeholder="¿Qué incluye el producto?"
+          ></textarea>
+        </div>
+
+        <div class="form-group conversion-toggle">
+          <label class="toggle-label">
+            <input type="checkbox" v-model="useAutoConversion[index]" />
+            <span class="toggle-text">Usar conversión automática</span>
+          </label>
+        </div>
+
+        <div class="form-group" v-if="useAutoConversion[index]">
+          <label for="exchange_rate">Tasa de Cambio (1 USD = X Bs):</label>
+          <div class="price-input-container">
+            <span class="currency-symbol">Bs</span>
             <input
-              type="checkbox"
-              :id="category"
-              :value="category"
-              v-model="newProduct.categories"
+              :id="'exchange_rate_' + index"
+              v-model="exchangeRate"
+              type="number"
+              step="0.01"
+              placeholder="56"
             />
-            <label :for="category">{{ category }}</label>
           </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="images">Imágenes:</label>
-        <input
-          type="file"
-          id="images"
-          @change="handleFileSelect"
-          multiple
-          accept="image/*"
-          required
-        />
-        <small class="file-info" v-if="selectedFiles.length > 0">
-          {{ selectedFiles.length }} archivo
-        </small>
+        <div class="form-group">
+          <label :for="'price_usd_' + index">Precio (USD):</label>
+          <div class="price-input-container">
+            <span class="currency-symbol">$</span>
+            <input
+              :id="'price_usd_' + index"
+              v-model="product.price_usd"
+              required
+              type="number"
+              step="0.01"
+              placeholder="10"
+              @input="updatePrices('usd', index)"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label :for="'price_bs_' + index">Precio (Bs):</label>
+          <div class="price-input-container">
+            <span class="currency-symbol">Bs</span>
+            <input
+              :id="'price_bs_' + index"
+              v-model="product.price_bs"
+              required
+              type="number"
+              step="0.01"
+              placeholder="560"
+              @input="updatePrices('bs', index)"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Categorías (selecciona una o más):</label>
+          <div class="categories-container">
+            <div v-for="category in categories" :key="category" class="category-checkbox">
+              <input
+                type="checkbox"
+                :id="`${category}-${index}`"
+                :value="category"
+                v-model="product.categories"
+              />
+              <label :for="`${category}-${index}`">{{ category }}</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label :for="`images-${index}`">Imágenes:</label>
+          <input
+            type="file"
+            :id="`images-${index}`"
+            @change="(e) => previewImages(e, index)"
+            multiple
+            accept="image/*"
+            required
+          />
+          <div class="image-previews" v-if="imagePreviewUrls[index]?.length > 0">
+            <div
+              v-for="(url, imgIndex) in imagePreviewUrls[index]"
+              :key="imgIndex"
+              class="preview-container"
+            >
+              <img :src="url" :alt="`Preview ${imgIndex + 1}`" class="image-preview" />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="button-group">
@@ -189,14 +203,47 @@
     <div v-if="isAuthenticated && activeTab === 'categories'" class="manage-categories">
       <div class="add-category">
         <input type="text" v-model="newCategory" placeholder="Nueva categoría..." />
+        <input
+          type="file"
+          @change="handleCategoryImageChange"
+          accept="image/*"
+          class="category-image-input"
+        />
         <button @click="addCategory" class="add-button">Agregar</button>
       </div>
 
       <div class="categories-list">
-        <div v-for="category in categories" :key="category" class="category-item">
-          <span>{{ category }}</span>
-          <div class="category-actions">
-            <button @click="deleteCategory(category)" class="delete-button">Eliminar</button>
+        <div v-for="(category, index) in categories" :key="category" class="category-item">
+          <div v-if="editingCategory?.oldName === category" class="category-edit-form">
+            <input type="text" v-model="editingCategory.newName" />
+            <input
+              type="file"
+              @change="handleCategoryImageChange"
+              accept="image/*"
+              class="category-image-input"
+            />
+            <img
+              v-if="categoryImagePreview"
+              :src="categoryImagePreview"
+              class="category-image-preview"
+            />
+            <div class="edit-actions">
+              <button @click="updateCategory" class="save-button">Guardar</button>
+              <button @click="editingCategory = null" class="cancel-button">Cancelar</button>
+            </div>
+          </div>
+          <div v-else class="category-display">
+            <img
+              :src="store.classesImages[index] || defaultImageUrl"
+              :data-category="category"
+              class="category-image"
+              @error="handleImageError"
+            />
+            <span>{{ category }}</span>
+            <div class="category-actions">
+              <button @click="startEditCategory(category)" class="edit-button">Editar</button>
+              <button @click="deleteCategory(category)" class="delete-button">Eliminar</button>
+            </div>
           </div>
         </div>
       </div>
@@ -250,7 +297,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, watch, computed } from 'vue'
+import { ref, onBeforeMount, watch, computed, onMounted } from 'vue'
 import { Store } from '@/stores/Store.js'
 import {
   getStorage,
@@ -283,7 +330,7 @@ const newProduct = ref({
 })
 
 const exchangeRate = ref('')
-const useAutoConversion = ref(true)
+const useAutoConversion = ref([])
 const categories = ref([])
 const selectedFiles = ref([])
 const isAuthenticated = ref(false)
@@ -295,9 +342,19 @@ const editingItem = ref(null)
 const newCategory = ref('')
 const allProducts = ref([])
 let isLoading = ref(false)
+const productCount = ref(1)
+const showProductCountModal = ref(false)
+const products = ref([])
+const imagePreviewUrls = ref([])
+const editingCategory = ref(null)
+const categoryImageFile = ref(null)
+const categoryImagePreview = ref('')
+const defaultImageUrl =
+  'https://img.freepik.com/vector-premium/vector-icono-imagen-predeterminado-pagina-imagen-faltante-diseno-sitio-web-o-aplicacion-movil-no-hay-foto-disponible_87543-11093.jpg'
 
 // Get categories on mount
 const getCategories = async () => {
+  categories.value = [] // Clear local categories
   if (store.classes.length === 0) {
     await store.getClasses()
   }
@@ -353,20 +410,27 @@ watch(useAutoConversion, (newValue) => {
 
 // Watch for changes in exchange rate
 watch(exchangeRate, (newValue) => {
-  if (useAutoConversion.value && newValue && newProduct.value.price_usd) {
-    // Update Bs price when exchange rate changes
-    newProduct.value.price_bs = (newProduct.value.price_usd * newValue).toFixed(2)
+  if (newValue) {
+    products.value.forEach((product, index) => {
+      if (useAutoConversion.value[index] && product.price_usd) {
+        product.price_bs = (product.price_usd * newValue).toFixed(2)
+      }
+    })
   }
 })
 
 // New function to handle price conversions
-const updatePrices = (currency) => {
-  if (!exchangeRate.value || !useAutoConversion.value) return
+const updatePrices = (currency, productIndex) => {
+  if (!exchangeRate.value || !useAutoConversion.value[productIndex]) return
 
-  if (currency === 'usd' && newProduct.value.price_usd) {
-    newProduct.value.price_bs = (newProduct.value.price_usd * exchangeRate.value).toFixed(2)
-  } else if (currency === 'bs' && newProduct.value.price_bs) {
-    newProduct.value.price_usd = (newProduct.value.price_bs / exchangeRate.value).toFixed(2)
+  if (currency === 'usd' && products.value[productIndex].price_usd) {
+    products.value[productIndex].price_bs = (
+      products.value[productIndex].price_usd * exchangeRate.value
+    ).toFixed(2)
+  } else if (currency === 'bs' && products.value[productIndex].price_bs) {
+    products.value[productIndex].price_usd = (
+      products.value[productIndex].price_bs / exchangeRate.value
+    ).toFixed(2)
   }
 }
 
@@ -377,98 +441,106 @@ const uploadProduct = async () => {
     return
   }
 
-  if (newProduct.value.categories.length === 0) {
-    alert('Por favor, selecciona al menos una categoría')
-    return
+  for (const product of products.value) {
+    if (product.categories.length === 0) {
+      alert('Por favor, selecciona al menos una categoría para cada producto')
+      return
+    }
   }
 
   try {
-    const productId = `${Date.now()}`
-    newProduct.value.id = productId
+    for (const [index, product] of products.value.entries()) {
+      const productId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      product.id = productId
 
-    // Upload images
-    const uploadedImageUrls = []
-    for (const file of selectedFiles.value) {
-      const imageRef = storageRef(
-        storage,
-        `/Productos/${productId} - ${newProduct.value.name}/${file.name}`
-      )
-      await uploadBytes(imageRef, file)
-      const url = await getDownloadURL(imageRef)
-      uploadedImageUrls.push(url)
-    }
-
-    // Create product info as an array with exact positions
-    const productInfo = []
-    productInfo[0] = productId
-    productInfo[1] = null
-    productInfo[2] = productId
-    productInfo[3] = newProduct.value.name
-    productInfo[4] = ''
-    productInfo[5] = newProduct.value.description
-    productInfo[6] = ''
-    productInfo[7] = newProduct.value.includes
-    productInfo[8] = ''
-    productInfo[9] = Number(newProduct.value.price_usd) // Convert to number
-    productInfo[10] = Number(newProduct.value.price_bs) // Convert to number
-    // Add categories starting from index 11
-    newProduct.value.categories.forEach((category) => {
-      productInfo.push(category)
-    })
-
-    // Upload product info
-    const infoRef = storageRef(
-      storage,
-      `/Productos/${productId} - ${newProduct.value.name}/info.json`
-    )
-    await uploadBytes(infoRef, new TextEncoder().encode(JSON.stringify(productInfo)))
-
-    // Update each category file
-    for (const category of newProduct.value.categories) {
-      const categoryRef = storageRef(storage, `/${category}/${category}.txt`)
-      let categoryData = ''
-      try {
-        const url = await getDownloadURL(categoryRef)
-        const response = await fetch(url)
-        categoryData = await response.text()
-      } catch (error) {
-        console.log(`New category file will be created for ${category}`)
+      // Upload images using the correct index
+      const uploadedImageUrls = []
+      if (selectedFiles.value[index]?.length > 0) {
+        for (const file of selectedFiles.value[index]) {
+          const imageRef = storageRef(
+            storage,
+            `/Productos/${productId} - ${product.name}/${file.name}`
+          )
+          await uploadBytes(imageRef, file)
+          const url = await getDownloadURL(imageRef)
+          uploadedImageUrls.push(url)
+        }
       }
 
-      // Ensure proper formatting: space at start, no space before comma
-      const newEntry = `${productId} - ${newProduct.value.name}`
-      const newCategoryData = categoryData ? `${categoryData.trim()} ${newEntry},` : ` ${newEntry},`
+      // Create product info
+      const productInfo = []
+      productInfo[0] = productId
+      productInfo[1] = null
+      productInfo[2] = productId
+      productInfo[3] = product.name
+      productInfo[4] = ''
+      productInfo[5] = product.description
+      productInfo[6] = ''
+      productInfo[7] = product.includes
+      productInfo[8] = ''
+      productInfo[9] = Number(product.price_usd)
+      productInfo[10] = Number(product.price_bs)
+      product.categories.forEach((category) => {
+        productInfo.push(category)
+      })
 
-      await uploadBytes(categoryRef, new TextEncoder().encode(newCategoryData))
+      // Upload product info
+      const infoRef = storageRef(storage, `/Productos/${productId} - ${product.name}/info.json`)
+      await uploadBytes(infoRef, new TextEncoder().encode(JSON.stringify(productInfo)))
+
+      // Update categories
+      for (const category of product.categories) {
+        const categoryRef = storageRef(storage, `/${category}/${category}.txt`)
+        let categoryData = ''
+        try {
+          const url = await getDownloadURL(categoryRef)
+          const response = await fetch(url)
+          categoryData = await response.text()
+        } catch (error) {
+          console.log(`New category file will be created for ${category}`)
+        }
+
+        const newEntry = `${productId} - ${product.name}`
+        const newCategoryData = categoryData
+          ? `${categoryData.trim()} ${newEntry},`
+          : ` ${newEntry},`
+
+        await uploadBytes(categoryRef, new TextEncoder().encode(newCategoryData))
+      }
     }
 
-    alert('Producto subido exitosamente')
+    alert('Productos subidos exitosamente')
     clearForm()
   } catch (error) {
-    console.error('Error uploading product:', error)
-    alert('Error al subir el producto')
+    console.error('Error uploading products:', error)
+    alert('Error al subir los productos')
   }
 }
 
 // Clear form
 const clearForm = () => {
-  newProduct.value = {
-    id: '',
-    name: '',
-    description: '',
-    includes: '',
-    price_usd: '',
-    price_bs: '',
-    categories: [],
-    images: []
-  }
+  products.value = [
+    {
+      id: '',
+      name: '',
+      description: '',
+      includes: '',
+      price_usd: '',
+      price_bs: '',
+      categories: [],
+      images: []
+    }
+  ]
+  productCount.value = 1
   exchangeRate.value = ''
-  useAutoConversion.value = true
-  selectedFiles.value = []
-  const fileInput = document.querySelector('#images')
-  if (fileInput) {
-    fileInput.value = ''
-  }
+  useAutoConversion.value = [true]
+  selectedFiles.value = [[]]
+  imagePreviewUrls.value = [[]]
+
+  // Clear all file inputs
+  document.querySelectorAll('input[type="file"]').forEach((input) => {
+    input.value = ''
+  })
 }
 
 let processedIds = [] // Track processed IDs
@@ -502,7 +574,7 @@ const loadAllProducts = async (searchTerm) => {
           .replace(/[eéèëê]/g, '[eéèëê]')
           .replace(/[iíìïî]/g, '[iíìïî]')
           .replace(/[oóòöô]/g, '[oóòöô]')
-          .replace(/[uúùüû]/g, '[uúùüû]')
+          .replace(/[uúùüû]/g, '[uúùü��]')
       })
       .map((word) => new RegExp(word, 'i'))
 
@@ -567,6 +639,7 @@ const searchProducts = async () => {
   }
 
   isLoading.value = true
+  processedIds = [] // Reset processed IDs before each search
   try {
     await loadAllProducts(searchQuery.value)
   } finally {
@@ -616,6 +689,9 @@ const deleteProduct = async (product) => {
       }
     }
 
+    // After successful deletion, refresh the search data
+    await store.refreshSearchData()
+
     // Refresh product list
     if (searchQuery.value) {
       await searchProducts()
@@ -638,9 +714,20 @@ const addCategory = async () => {
     // Create empty category file
     await uploadBytes(categoryRef, new TextEncoder().encode(''))
 
+    // Upload category image if selected
+    if (categoryImageFile.value) {
+      const fileExtension = categoryImageFile.value.name.split('.').pop()
+      const imageRef = storageRef(storage, `/${categoryName}/image.${fileExtension}`)
+      await uploadBytes(imageRef, categoryImageFile.value)
+    }
+
     // Refresh categories
-    await getCategories()
+    await store.getClasses() // This will refresh both categories and images
+    categories.value = store.classes
+
     newCategory.value = ''
+    categoryImageFile.value = null
+    categoryImagePreview.value = ''
     alert('Categoría agregada exitosamente')
   } catch (error) {
     console.error('Error adding category:', error)
@@ -660,7 +747,9 @@ const deleteCategory = async (category) => {
     await Promise.all(files.items.map((file) => deleteObject(file)))
 
     // Refresh categories
-    await getCategories()
+    await store.getClasses() // This will refresh both categories and images
+    categories.value = store.classes
+
     alert('Categoría eliminada exitosamente')
   } catch (error) {
     console.error('Error deleting category:', error)
@@ -689,7 +778,7 @@ const editProduct = (product) => {
   showEditModal.value = true
 }
 
-// Modified saveEdit function - focusing on the category part
+// Update the saveEdit function
 const saveEdit = async () => {
   try {
     const product = editingItem.value
@@ -768,13 +857,20 @@ const saveEdit = async () => {
     const infoRef = storageRef(storage, `/Productos/${product.id} - ${product.name}/info.json`)
     await uploadBytes(infoRef, new TextEncoder().encode(JSON.stringify(productInfo)))
 
+    // After successful edit, refresh the search data
+    await store.refreshSearchData()
+
     alert('Producto actualizado exitosamente')
     showEditModal.value = false
 
-    // Refresh the product list if we're in edit mode
-    if (activeTab.value === 'edit' && searchQuery.value) {
-      await searchProducts()
-    }
+    // Reset search state completely
+    searchQuery.value = ''
+    filteredProducts.value = []
+    processedIds = [] // Reset the processed IDs array
+
+    // Optional: If you want to immediately search for the updated product
+    searchQuery.value = product.name
+    await searchProducts()
   } catch (error) {
     console.error('Error saving changes:', error)
     alert('Error al guardar los cambios')
@@ -877,6 +973,221 @@ const checkDuplicates = async () => {
     console.error('Error checking duplicates:', error)
     alert('Error al buscar duplicados')
   }
+}
+
+// Update the image preview function to handle multiple products
+const previewImages = (event, productIndex) => {
+  selectedFiles.value[productIndex] = Array.from(event.target.files)
+  imagePreviewUrls.value[productIndex] = []
+
+  selectedFiles.value[productIndex].forEach((file) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      imagePreviewUrls.value[productIndex].push(e.target.result)
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
+// Add method to initialize multiple products
+const initializeMultipleProducts = () => {
+  const count = parseInt(prompt('¿Cuántos productos deseas agregar?', '1'))
+  if (!count || count < 1) {
+    alert('Por favor ingresa un número válido mayor a 0')
+    return
+  }
+
+  productCount.value = count
+  products.value = Array(count)
+    .fill()
+    .map(() => ({
+      id: '',
+      name: '',
+      description: '',
+      includes: '',
+      price_usd: '',
+      price_bs: '',
+      categories: [],
+      images: []
+    }))
+
+  useAutoConversion.value = Array(count).fill(true)
+  selectedFiles.value = Array(count).fill([])
+  imagePreviewUrls.value = Array(count).fill([])
+
+  showProductCountModal.value = false
+}
+
+const startEditCategory = async (category) => {
+  editingCategory.value = {
+    oldName: category,
+    newName: category,
+    image: null
+  }
+
+  // Try to load existing category image
+  try {
+    const imageRef = storageRef(storage, `/${category}`)
+    const files = await listAll(imageRef)
+    const imageFile = files.items.find((item) =>
+      item.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i)
+    )
+
+    if (imageFile) {
+      const url = await getDownloadURL(imageFile)
+      categoryImagePreview.value = url
+    } else {
+      categoryImagePreview.value = ''
+    }
+  } catch (error) {
+    categoryImagePreview.value = ''
+  }
+}
+
+const updateCategory = async () => {
+  if (!editingCategory.value || !editingCategory.value.newName.trim()) return
+
+  try {
+    const oldName = editingCategory.value.oldName
+    const newName = editingCategory.value.newName.trim()
+
+    // If only changing the image (same name)
+    if (oldName === newName && categoryImageFile.value) {
+      const fileExtension = categoryImageFile.value.name.split('.').pop()
+      const imageRef = storageRef(storage, `/${oldName}/image.${fileExtension}`)
+      await uploadBytes(imageRef, categoryImageFile.value)
+      alert('Imagen de categoría actualizada exitosamente')
+    }
+    // If changing name (with or without new image)
+    else if (oldName !== newName) {
+      // 1. Get old category content
+      const oldCategoryRef = storageRef(storage, `/${oldName}/${oldName}.txt`)
+      let content = ''
+      try {
+        const url = await getDownloadURL(oldCategoryRef)
+        const response = await fetch(url)
+        content = await response.text()
+      } catch (error) {
+        console.log('No existing content found')
+      }
+
+      // 2. Create new category with old content
+      const newCategoryRef = storageRef(storage, `/${newName}/${newName}.txt`)
+      await uploadBytes(newCategoryRef, new TextEncoder().encode(content))
+
+      // 3. Copy or upload image
+      if (categoryImageFile.value) {
+        // Upload new image
+        const fileExtension = categoryImageFile.value.name.split('.').pop()
+        const newImageRef = storageRef(storage, `/${newName}/image.${fileExtension}`)
+        await uploadBytes(newImageRef, categoryImageFile.value)
+      } else {
+        // Try to copy existing image
+        try {
+          const oldImageRef = storageRef(storage, `/${oldName}`)
+          const oldFiles = await listAll(oldImageRef)
+          const imageFile = oldFiles.items.find((item) =>
+            item.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i)
+          )
+
+          if (imageFile) {
+            const imageUrl = await getDownloadURL(imageFile)
+            const response = await fetch(imageUrl)
+            const imageBlob = await response.blob()
+            const fileExtension = imageFile.name.split('.').pop()
+            const newImageRef = storageRef(storage, `/${newName}/image.${fileExtension}`)
+            await uploadBytes(newImageRef, imageBlob)
+          }
+        } catch (error) {
+          console.log('No existing image to copy')
+        }
+      }
+      // 4. Update all product references in Firebase
+      const productsRef = storageRef(storage, '/Productos')
+      const products = await listAll(productsRef)
+
+      for (const productFolder of products.prefixes) {
+        try {
+          const infoRef = storageRef(storage, `/Productos/${productFolder.name}/info.json`)
+          const productUrl = await getDownloadURL(infoRef)
+          const productResponse = await fetch(productUrl)
+          const productData = await productResponse.json()
+
+          // Update category in product data if needed
+          let updated = false
+          for (let i = 11; i < productData.length; i++) {
+            if (productData[i] === oldName) {
+              productData[i] = newName
+              updated = true
+            }
+          }
+
+          if (updated) {
+            await uploadBytes(infoRef, new TextEncoder().encode(JSON.stringify(productData)))
+          }
+        } catch (error) {
+          console.error('Error updating product:', error)
+        }
+      }
+      // 5. Delete old category folder and all its contents
+      try {
+        const oldFolder = storageRef(storage, `/${oldName}`)
+        const oldFiles = await listAll(oldFolder)
+        // Delete all files first
+        await Promise.all(
+          oldFiles.items.map(async (file) => {
+            try {
+              await deleteObject(file)
+              console.log(`Deleted file: ${file.name}`)
+            } catch (error) {
+              console.error(`Error deleting file ${file.name}:`, error)
+            }
+          })
+        )
+
+        // Verify deletion and show feedback
+        console.log(`Old category "${oldName}" deleted successfully`)
+        alert(`Categoría "${oldName}" actualizada a "${newName}" exitosamente`)
+      } catch (error) {
+        console.error('Error deleting old category folder:', error)
+        throw error // Re-throw to trigger catch block
+      }
+    }
+
+    // 6. Refresh everything
+    categories.value = [] // Clear current categories
+    await store.getClasses() // This will refresh both categories and images
+    categories.value = store.classes
+    editingCategory.value = null
+    categoryImageFile.value = null
+    categoryImagePreview.value = ''
+  } catch (error) {
+    console.error('Error updating category:', error)
+    alert('Error al actualizar la categoría')
+  }
+}
+
+const refreshCategories = async () => {
+  await store.getClasses()
+  categories.value = store.classes
+}
+
+const handleCategoryImageChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    categoryImageFile.value = file
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      categoryImagePreview.value = e.target.result
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+const handleImageError = (event) => {
+  event.target.src =
+    'https://img.freepik.com/vector-premium/vector-icono-imagen-predeterminado-pagina-imagen-faltante-diseno-sitio-web-o-aplicacion-movil-no-hay-foto-disponible_87543-11093.jpg'
+  console.error('Failed to load image for category:', event.target.getAttribute('data-category'))
 }
 </script>
 
@@ -1258,5 +1569,129 @@ textarea {
   padding: 2rem;
   color: #666;
   font-style: italic;
+}
+
+.image-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.preview-container {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.add-multiple-button {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-multiple-button:hover {
+  background-color: #3367d6;
+}
+
+.product-form {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.product-form h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.categories-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.category-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.image-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.preview-container {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+.category-image-input {
+  margin: 0.5rem 0;
+}
+
+.category-image-preview,
+.category-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 1rem;
+}
+
+.category-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.category-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.category-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 </style>

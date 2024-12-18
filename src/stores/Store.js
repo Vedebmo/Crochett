@@ -159,6 +159,10 @@ export const Store = defineStore('Store', {
     },
 
     getClasses() {
+      // Clear existing data
+      this.classes = []
+      this.classesImages = []
+
       const storageRef = ref(storage, '/')
       listAll(storageRef)
         .then((res) => {
@@ -408,6 +412,21 @@ export const Store = defineStore('Store', {
           }
         })
       })
+    },
+
+    async refreshSearchData() {
+      // Clear existing search data
+      this.searchedImages = []
+
+      // Re-initialize search-related data
+      const storageRef = ref(storage, '/Productos')
+      try {
+        const res = await listAll(storageRef)
+        // Update the products list for search
+        this.products = res.prefixes.map((prefix) => prefix.name)
+      } catch (error) {
+        console.error('Error refreshing search data:', error)
+      }
     }
   }
 })
